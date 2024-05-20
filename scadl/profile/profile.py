@@ -13,7 +13,9 @@ class profileEngine(Model):
 
     def train(self, x_train, metadata, epochs=300, batch_size=100):
         y_train = np.array([self.leakage_model(i) for i in metadata]) 
-        self.model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.1)        
+        self.history = self.model.fit(x_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.1)
+        
+
     def save_model(self, name):
         self.model.save(name)
 
