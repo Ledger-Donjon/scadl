@@ -3,4 +3,4 @@
 build/
 dist/
 scadl.egg-info/
-!.gitignore 
+.* 
