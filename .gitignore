@@ -1,3 +1,4 @@
 dist/
 build/
 *.
+scadl.egg-info/
