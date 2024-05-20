@@ -2,3 +2,4 @@
 # ignore ALL files in ANY directory named build
 build/
 dist/
+scadl.egg-info/
