@@ -1,6 +1,4 @@
 dist/
 build/
-*.egg-info/
-.installed.cfg
-*.egg
+egg-info/dependency_links.txt
 
