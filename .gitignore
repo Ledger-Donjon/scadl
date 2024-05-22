@@ -1,4 +1,4 @@
 dist/
 build/
-egg-info/dependency_links.txt
+scadl.egg-info/
 
