@@ -1,8 +1,0 @@
-Metadata-Version: 2.1
-Name: scadl
-Version: 0.1
-Summary: A tool for state of the artr DL attacks
-Author: Karim M. Abdellatif
-Requires-Dist: numpy
-Requires-Dist: keras
-Requires-Dist: matplotlib
