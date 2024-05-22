@@ -75,14 +75,27 @@ def mlp_best(node=200, layer_nb=6):                   #node=500
     for i in range(layer_nb-2):
         model.add(Dense(node, activation='relu'))
         Dropout(0.1)    #Dropout(0.01)
-        #BatchNormalization()
+        # BatchNormalization()
     model.add(Dense(2, activation='softmax'))
-    optimizer = keras.optimizers.Adam(learning_rate=0.01) #RMSprop(lr=0.00001)# 'adam'#RMSprop(lr=0.00001)
-    model.compile(loss='mean_squared_error', optimizer=optimizer, metrics=['accuracy'])   # categorical_crossentropy
+    optimizer = 'adam' # keras.optimizers.Adam(learning_rate=0.01) #RMSprop(lr=0.00001)# 'adam'#RMSprop(lr=0.00001)
+    model.compile(loss='mean_squared_error', optimizer=optimizer, metrics=['accuracy'])   # categorical_crossentropy  mean_squared_error
     return model
 
 
 
+
+
+# def mlp_best(node=200, layer_nb=6):                   #node=500
+#     model = Sequential()
+#     model.add(Dense(node, activation='relu'))     #28   #node
+#     for i in range(layer_nb-2):
+#         model.add(Dense(node, activation='relu'))
+#         Dropout(0.1)    #Dropout(0.01)
+#         #BatchNormalization()
+#     model.add(Dense(2, activation='softmax'))
+#     optimizer = 'adam' #RMSprop(lr=0.00001)# 'adam'#RMSprop(lr=0.00001)
+#     model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+#     return model
 
 
 

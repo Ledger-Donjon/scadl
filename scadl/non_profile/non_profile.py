@@ -13,12 +13,12 @@ class profileEngine(Model):
 
     def train(self, x_train, metadata, key_range, epochs=300, batch_size=100):
         self.acc = np.zeros((len(key_range), epochs), dtype=np.double)
-        for guess in range(len(key_range)):
+        for index, guess in enumerate(key_range):
             print(f"Trying guess = {guess}")
             y_train = np.array([self.leakage_model(i, guess) for i in metadata]) 
             y = keras.utils.to_categorical(y_train, 2)
-            self.history = self.model.fit(x_train, y, epochs=epochs, batch_size=batch_size, validation_split=0.15)
-            self.acc[guess] = self.history.history['val_accuracy']
+            self.history = self.model.fit(x_train, y, epochs=epochs, batch_size=batch_size, validation_split=0.1)
+            self.acc[index] = self.history.history['accuracy']   # val_accuracy
         return self.acc
 
         
