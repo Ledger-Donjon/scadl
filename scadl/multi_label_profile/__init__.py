@@ -1,1 +1,1 @@
-from .multi_label_profile import * 
+from .multi_label_profile import *

@@ -1,4 +1,5 @@
 dist/
 build/
 scadl.egg-info/
+.keras
 
