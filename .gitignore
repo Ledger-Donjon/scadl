@@ -1,6 +1,4 @@
 dist/
 build/
+*.keras
 scadl.egg-info/
-*examples/.keras
-
-
