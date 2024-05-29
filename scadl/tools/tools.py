@@ -531,5 +531,6 @@ def remove_avg(traces):
     avg = np.average(traces, axis=0)
     return traces - avg
 
+
 def gen_labels(leakage_model, metadata, key_byte):
     return np.array([leakage_model(i, key_byte=key_byte) for i in metadata])

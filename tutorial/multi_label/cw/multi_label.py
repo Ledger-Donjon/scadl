@@ -6,8 +6,8 @@ import numpy as np
 from sklearn.preprocessing import MultiLabelBinarizer
 import sys
 
-sys.path.append("../models")
-from used_models import mlp_multi_label
+sys.path.append("../../models")
+from cw_models import mlp_multi_label
 
 
 def leakage_model(metadata, key_byte):

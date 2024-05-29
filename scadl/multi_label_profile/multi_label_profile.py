@@ -10,7 +10,7 @@ class multiLabelEngine(Model):
     def __init__(self, model):
         super().__init__()
         self.model = model
-        # // self.leakage_model = leakage_model
+        # self.leakage_model = leakage_model
 
     def train(self, x_train, y_train, epochs=300, batch_size=100):
         self.model.fit(
@@ -30,6 +30,8 @@ class matchEngine(Model):
     def match(
         self, x_test, metadata, guess_range, correct_key, step, prob_range=(0, 256)
     ):
+        """This function takes the prob_range depending on the targeted byte
+        for ex: k0: (0, 256), k1: (256, 512), k2: (512, 768), .... etc"""
         rank = []
         number_traces = 0
         x_rank = []

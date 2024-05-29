@@ -29,6 +29,7 @@ class matchEngine(Model):
         self.leakage_model = leakage_model
 
     def match(self, x_test, metadata, guess_range, correct_key, step):
+        """They key rank is implemnted based on the sum of np.log() of the prob"""
         rank = []
         number_traces = 0
         x_rank = []

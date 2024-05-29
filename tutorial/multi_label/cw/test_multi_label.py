@@ -6,6 +6,8 @@ from keras.models import load_model
 
 
 """Leakage model"""
+
+
 def leakage_model(metadata, guess):
     return sbox[guess ^ metadata["plaintext"][target_byte]]
 
@@ -18,7 +20,7 @@ if __name__ == "__main__":
     leakages = np.load(directory + "test/traces.npy")[0:size_test]
     metadata = np.load(directory + "test/combined_test.npy")[0:size_test]
     """selecting which key byte needs to be attacked"""
-    target_byte = 0  # or 1
+    target_byte = 1  # or 1
     """Probability range is selected based on the key byte """
     prob_range = (target_byte * 256, 256 + target_byte * 256)
     correct_key = metadata["key"][0][target_byte]

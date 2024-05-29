@@ -2,8 +2,8 @@ from scadl.profile import profileEngine
 from scadl import sbox, normalization
 import sys
 
-sys.path.append("../models")
-from used_models import *
+sys.path.append("../../models")
+from cw_models import *
 
 
 """Leakage function"""
