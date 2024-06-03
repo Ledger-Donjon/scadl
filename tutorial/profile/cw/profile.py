@@ -24,10 +24,10 @@ if __name__ == "__main__":
     x_train = normalization(
         leakages[:, 1315:1325]
     )  # Normalization is used for improving the learning
-    
+
     len_samples = x_train.shape[1]
     guess_range = 256
-    
+
     """Loading the DL model mlp"""
     len_samples = x_train.shape[1]
     guess_range = 256

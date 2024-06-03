@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     # model = mlp_multi_label()
     model = cnn_multi_label(len_samples, 512)
-    
+
     """call multi-label profiling engine"""
     profile = multiLabelEngine(model)
     profile.train(x_train=poi, y_train=labels_fit, epochs=100)

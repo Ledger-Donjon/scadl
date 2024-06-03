@@ -14,13 +14,18 @@ class profileEngine(Model):
         self.model = model
         self.leakage_model = leakage_model
 
-    def train(self, x_train, metadata, epochs=300, batch_size=100, validation_split=0.1):
+    def train(
+        self, x_train, metadata, epochs=300, batch_size=100, validation_split=0.1
+    ):
         y_train = np.array([self.leakage_model(i) for i in metadata])
-
 
         y_train = keras.utils.to_categorical(y_train, 256)
         self.history = self.model.fit(
-            x_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=validation_split
+            x_train,
+            y_train,
+            epochs=epochs,
+            batch_size=batch_size,
+            validation_split=validation_split,
         )
 
         # X_train, X_test, Y_train, Y_test = train_test_split(x_train, y_train, test_size=validation_split)

@@ -13,6 +13,7 @@ from tensorflow.keras.layers import BatchNormalization
 
 """No protected CW AES"""
 
+
 def model_mlp():
     model = Sequential()
     # model.add(tf.keras.layers.Flatten())
@@ -22,9 +23,12 @@ def model_mlp():
     model.add(Dense(500, activation=tf.nn.relu))
     model.add(Dense(256, activation=tf.nn.softmax))
     model.compile(
-        optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"]     # sparse_categorical_crossentropy
+        optimizer="adam",
+        loss="categorical_crossentropy",
+        metrics=["accuracy"],  # sparse_categorical_crossentropy
     )
     return model
+
 
 def model_cnn(len_samples, guess_range):
     model = Sequential()
@@ -40,6 +44,7 @@ def model_cnn(len_samples, guess_range):
 
 
 """Multi-label architectures"""
+
 
 def mlp_multi_label(node=50, layer_nb=4):
     model = Sequential()
@@ -61,11 +66,8 @@ def cnn_multi_label(len_samples, guess_range):
     model.add(Flatten())
     model.add(Dense(200, activation="relu"))
     model.add(Dense(guess_range, activation="sigmoid"))
-    model.compile(
-        optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]
-    )
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
     return model
-
 
 
 # def model_cnn(len_samples, guess_range):
@@ -81,8 +83,8 @@ def cnn_multi_label(len_samples, guess_range):
 #     return model
 
 
-
 """Non-profiling attacks"""
+
 
 def mlp_non_profiling():
     model = Sequential()
@@ -96,7 +98,6 @@ def mlp_non_profiling():
     model.add(Dense(2, activation=tf.nn.softmax))
     model.compile(optimizer="adam", loss="mean_squared_error", metrics=["accuracy"])
     return model
-
 
 
 def mlp_best(node=200, inner_layers=4):  # node=500
@@ -121,9 +122,5 @@ def cnn_best(len_samples, guess_range):
     model.add(Flatten())
     model.add(Dense(200, activation="relu"))
     model.add(Dense(guess_range, activation="softmax"))
-    model.compile(
-        optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"]
-    )
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
     return model
-
-
