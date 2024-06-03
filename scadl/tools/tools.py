@@ -520,11 +520,13 @@ inv_sbox = [
 ]
 
 
+
 def normalization(traces):
     normalized_traces = np.zeros((traces.shape[0], traces.shape[1]), dtype=np.double)
-    for i, trace in enumerate(traces):
-        normalized_traces[i] = (trace - min(trace)) / (max(trace) - min(trace))
-    return normalized_traces
+    min_valeu = np.min(traces)
+    max_value = np.max(traces)
+    return (traces - min_valeu) / (max_value - min_valeu)
+  
 
 
 def remove_avg(traces):

@@ -24,13 +24,19 @@ if __name__ == "__main__":
     x_train = normalization(
         leakages[:, 1315:1325]
     )  # Normalization is used for improving the learning
-
-    """Loading the DL model"""
-    model = model_mlp()  # model_cnn(20, 256)
+    
+    len_samples = x_train.shape[1]
+    guess_range = 256
+    
+    """Loading the DL model mlp"""
+    len_samples = x_train.shape[1]
+    guess_range = 256
+    model = model_mlp()
+    # model = model_cnn(len_samples, guess_range)
 
     """Profiling"""
     profile_engine = profileEngine(model, leakage_model=leakage_model)
-    profile_engine.train(x_train=x_train, metadata=metadata, epochs=100, batch_size=100)
+    profile_engine.train(x_train=x_train, metadata=metadata, epochs=50, batch_size=100)
 
     """Save model"""
     profile_engine.save_model("model_mlp.keras")

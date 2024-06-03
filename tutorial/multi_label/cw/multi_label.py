@@ -7,7 +7,7 @@ from sklearn.preprocessing import MultiLabelBinarizer
 import sys
 
 sys.path.append("../../models")
-from cw_models import mlp_multi_label
+from cw_models import mlp_multi_label, cnn_multi_label
 
 
 def leakage_model(metadata, key_byte):
@@ -37,8 +37,13 @@ if __name__ == "__main__":
     label = MultiLabelBinarizer()
     labels_fit = label.fit_transform(combined_labels)
     """load model"""
-    model = mlp_multi_label()
+    len_samples = poi.shape[1]
+    guess_range = 512
+
+    # model = mlp_multi_label()
+    model = cnn_multi_label(len_samples, 512)
+    
     """call multi-label profiling engine"""
     profile = multiLabelEngine(model)
-    profile.train(x_train=poi, y_train=labels_fit)
-    profile.save_model("multi_mlp.keras")
+    profile.train(x_train=poi, y_train=labels_fit, epochs=100)
+    profile.save_model("multi_cnn.keras")

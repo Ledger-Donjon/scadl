@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
+import keras
+from sklearn.model_selection import train_test_split
 
 
 class profileEngine(Model):
@@ -12,11 +14,20 @@ class profileEngine(Model):
         self.model = model
         self.leakage_model = leakage_model
 
-    def train(self, x_train, metadata, epochs=300, batch_size=100):
+    def train(self, x_train, metadata, epochs=300, batch_size=100, validation_split=0.1):
         y_train = np.array([self.leakage_model(i) for i in metadata])
+
+
+        y_train = keras.utils.to_categorical(y_train, 256)
         self.history = self.model.fit(
-            x_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.1
+            x_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=validation_split
         )
+
+        # X_train, X_test, Y_train, Y_test = train_test_split(x_train, y_train, test_size=validation_split)
+        # self.history = self.model.fit(
+        #     X_train, Y_train, epochs=epochs, batch_size=batch_size, verbose=1,
+        #             validation_data=(X_test, Y_test)
+        # )
 
     def save_model(self, name):
         self.model.save(name)
@@ -44,7 +55,7 @@ class matchEngine(Model):
                 for guess in range(guess_range):
                     index = self.leakage_model(chunk_metdata[row], guess)
                     if chunk[row, index] != 0:
-                        rank_array[guess] += np.log(chunk[row, index])
+                        rank_array[guess] += np.log2(chunk[row, index])
                     # guess_predictions[row, guess] = self.predictions[row, guess]
             tmp_rank = np.where(sorted(rank_array)[::-1] == rank_array[correct_key])[0][
                 0
@@ -53,4 +64,4 @@ class matchEngine(Model):
             number_traces += step
             x_rank.append(number_traces)
 
-        return rank, x_rank
+        return np.array(rank), x_rank

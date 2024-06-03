@@ -3,7 +3,7 @@ from scadl import sbox, normalization, remove_avg
 import sys
 
 sys.path.append("../../models")
-from cw_models import mlp_non_profiling, mlp_best
+from cw_models import cnn_best, mlp_non_profiling
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -29,7 +29,10 @@ if __name__ == "__main__":
     x_train = normalization(avg)
 
     """Selecting the model"""
-    model = mlp_best()  # mlp_non_profiling()
+    key_range = 2
+    len_samples = x_train.shape[1]
+    model = mlp_non_profiling()
+    # model = cnn_best(len_samples, key_range)
 
     """Non-profiling DL"""
     profile_engine = profileEngine(model, leakage_model=leakage_model)
@@ -38,7 +41,7 @@ if __name__ == "__main__":
         metadata=metadata,
         hist_acc="val_accuracy",
         key_range=range(0, 256),
-        epochs=20,
+        epochs=50,
         batch_size=1000,
     )
 

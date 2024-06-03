@@ -29,7 +29,8 @@ if __name__ == "__main__":
     poi = np.concatenate((leakages[:, 1315:1325], leakages[:, 1490:1505]), axis=1)
 
     """Loading the model"""
-    model = load_model("multi_mlp.keras")
+    # model = load_model("multi_mlp.keras")
+    model = load_model("multi_cnn.keras")
 
     """Matching process"""
     test_engine = matchEngine(model=model, leakage_model=leakage_model)
