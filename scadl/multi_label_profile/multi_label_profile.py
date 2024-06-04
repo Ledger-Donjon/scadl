@@ -17,13 +17,8 @@
 # Copyright 2024 Karim ABDELLATIF, PhD, Ledger - karim.abdellatif@ledger.fr
 
 
-
-import tensorflow as tf
-from keras import preprocessing
-import matplotlib.pyplot as plt
 import numpy as np
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
+from keras.models import Model
 
 
 class multiLabelEngine(Model):
@@ -50,7 +45,7 @@ class matchEngine(Model):
     def match(
         self, x_test, metadata, guess_range, correct_key, step, prob_range=(0, 256)
     ):
-        """ 
+        """
         x_test, metadata: data used for profiling.
         prob_range depending on the targeted byte
         for ex: k0: (0, 256), k1: (256, 512), k2: (512, 768), .... etc

@@ -1,4 +1,4 @@
-from scadl.multi_label_profile import multiLabelEngine, matchEngine
+from scadl.multi_label_profile import multiLabelEngine
 from scadl.tools import sbox, gen_labels
 
 # from models import mlp_multi_label

@@ -17,19 +17,14 @@
 # Copyright 2024 Karim ABDELLATIF, PhD, Ledger - karim.abdellatif@ledger.fr
 
 
-import tensorflow as tf
-from keras import preprocessing
-import matplotlib.pyplot as plt
 import numpy as np
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
+from keras.models import Model
 import keras
-from sklearn.model_selection import train_test_split
 
 
 class profileEngine(Model):
     """This class is used for normal profiling.
-    It takes two argiments: the DL model and the leakage model 
+    It takes two argiments: the DL model and the leakage model
     """
 
     def __init__(self, model, leakage_model):
@@ -61,6 +56,7 @@ class profileEngine(Model):
 
 class matchEngine(Model):
     """This class is used for testing the attack after the profiling phase"""
+
     def __init__(self, model, leakage_model):
         """model: after training the profile model this is fed to this class to test the attack
         leakage_model: The same leakage model used for profiling"""
@@ -75,7 +71,7 @@ class matchEngine(Model):
         x_rank = []
         self.predictions = self.model.predict(x_test)
         rank_array = np.zeros(guess_range)
-        
+
         """success rate is calcultaed as shown in https://eprint.iacr.org/2006/139.pdf"""
         for i in range(0, len(x_test), step):
             chunk = self.predictions[i : i + step]
@@ -85,7 +81,9 @@ class matchEngine(Model):
                 for guess in range(guess_range):
                     index = self.leakage_model(chunk_metdata[row], guess)
                     if chunk[row, index] != 0:
-                        rank_array[guess] += np.log2(chunk[row, index])     # sum of np.log (predictions)
+                        rank_array[guess] += np.log2(
+                            chunk[row, index]
+                        )  # sum of np.log (predictions)
             tmp_rank = np.where(sorted(rank_array)[::-1] == rank_array[correct_key])[0][
                 0
             ]

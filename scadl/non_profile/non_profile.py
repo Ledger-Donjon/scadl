@@ -17,12 +17,8 @@
 # Copyright 2024 Karim ABDELLATIF, PhD, Ledger - karim.abdellatif@ledger.fr
 
 
-import tensorflow as tf
-from keras import preprocessing
-import matplotlib.pyplot as plt
 import numpy as np
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
+from keras.models import Model
 import keras
 
 
@@ -34,11 +30,20 @@ class profileEngine(Model):
         self.model = model
         self.leakage_model = leakage_model
 
-    def train(self, x_train, metadata, key_range, num_classes, hist_acc, epochs=300, batch_size=100):
+    def train(
+        self,
+        x_train,
+        metadata,
+        key_range,
+        num_classes,
+        hist_acc,
+        epochs=300,
+        batch_size=100,
+    ):
         """
         x_train, metadata: leakages and additional data used for training.
         From the paper (https://tches.iacr.org/index.php/TCHES/article/view/7387/6559), the attack may work when hist_acc= 'accuracy'
-        or 'val_accuracy' """
+        or 'val_accuracy'"""
         self.acc = np.zeros((len(key_range), epochs), dtype=np.double)
         """Trying possible keys"""
         for index, guess in enumerate(key_range):
@@ -48,7 +53,5 @@ class profileEngine(Model):
             self.history = self.model.fit(
                 x_train, y, epochs=epochs, batch_size=batch_size, validation_split=0.1
             )
-            self.acc[index] = self.history.history[
-                hist_acc
-            ]
+            self.acc[index] = self.history.history[hist_acc]
         return self.acc

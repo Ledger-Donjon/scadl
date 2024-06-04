@@ -1,15 +1,11 @@
-import tensorflow as tf
-from keras import preprocessing
-import matplotlib.pyplot as plt
-import numpy as np
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
-from tensorflow.keras.layers import Dropout
+
+from keras.models import Sequential, Model
+from keras.layers import Conv1D, Dense, Flatten
+from keras.layers import Dropout
 from keras.optimizers import RMSprop
 import keras
-from tensorflow.keras.losses import CategoricalCrossentropy
-from keras.layers import Flatten, Dense, Input, Conv1D, AveragePooling1D
-from tensorflow.keras.layers import BatchNormalization
+from keras.layers import Input, AveragePooling1D
+from keras.layers import BatchNormalization
 
 
 # In case of using the overall 700 samples
