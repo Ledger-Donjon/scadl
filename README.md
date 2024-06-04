@@ -10,8 +10,8 @@ This project has been developed within the research activities of the   Donjon t
 ## Features
 
 Scadl implements the following attacks which have been published before:
- - Normal profiling: A straightforward profiling technique as the attacker will use a known-key dataset to train a DL model. Then, this model is used to attack the unknown-key data set. This technique was presented by the following work: [1](https://eprint.iacr.org/2016/921), [2](https://eprint.iacr.org/2018/053), and [3](https://eprint.iacr.org/2019/578).
- - [Non-profiling](https://tches.iacr.org/index.php/TCHES/article/view/7387:) A similar technique to differential power Analysis ([DPA](https://paulkocher.com/doc/DifferentialPowerAnalysis.pdf)) but it has the several advantages over DPA to attack protected designs (masking and desynchronization).
+ - Normal profiling: A straightforward profiling technique as the attacker will use a known-key dataset to train a DL model. Then, this model is used to attack the unknown-key data set. This technique was presented by the following work: [1](https://eprint.iacr.org/2016/921) and [2](https://eprint.iacr.org/2018/053).
+ - [Non-profiling](https://tches.iacr.org/index.php/TCHES/article/view/7387) A similar technique to differential power Analysis ([DPA](https://paulkocher.com/doc/DifferentialPowerAnalysis.pdf)) but it has the several advantages over DPA to attack protected designs (masking and desynchronization).
  - [Multi-label](https://eprint.iacr.org/2020/436): A technique to attack multiple keys using only one DL model.    
 
 ## Installation
