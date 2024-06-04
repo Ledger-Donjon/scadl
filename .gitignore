@@ -1,7 +1,6 @@
 dist/
 build/
-*.keras
 scadl.egg-info/
 *.pyc
-*__pycache__/
-
+*__pycache__*
+*.keras
