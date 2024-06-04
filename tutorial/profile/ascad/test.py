@@ -10,16 +10,25 @@ def leakage_model(metadata, guess):
     return sbox[guess ^ metadata["plaintext"][2]]
 
 
+def rot(traces):
+    len_trace = traces.shape[1]
+    tmp_traces = traces
+    for i, trace in enumerate(traces):
+        index = np.random.randint(len_trace)
+        tmp_traces[i] = np.concatenate((trace[index:], trace[0: index]))
+    return tmp_traces
+
+
 if __name__ == "__main__":
     """loading traces and metadata for testing"""
     directory = "D:/ascad/ASCAD.h5"
     file = h5py.File(directory, "r")
-    size_test = 2000
     leakages = file["Attack_traces"]["traces"][:]
     metadata = file["Attack_traces"]["metadata"][:]
 
     """correct key value to test it's rank"""
     correct_key = metadata["key"][0][2]
+
 
     """Selecting poi where SNR gives the max value and it should have 
     the same index like what is used in the profiling phase """
@@ -30,8 +39,8 @@ if __name__ == "__main__":
 
     """Loading the DL model"""
     model = load_model("model_mlp.keras")
-    len_test = 1000
-    no_trials = 100
+    len_test = 500
+    no_trials = 20
     test_engine = matchEngine(model=model, leakage_model=leakage_model)
 
     for i in range(no_trials):

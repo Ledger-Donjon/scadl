@@ -17,6 +17,7 @@ def leakage_model(metadata):
     return sbox[metadata["plaintext"][2] ^ metadata["key"][2]]
 
 
+
 if __name__ == "__main__":
     """loading traces and metadata for training"""
     directory = "D:/ascad/ASCAD.h5"
@@ -24,9 +25,10 @@ if __name__ == "__main__":
     leakages = file["Profiling_traces"]["traces"][:]
     metadata = file["Profiling_traces"]["metadata"][:]
 
-    poi = np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
-
     """Selecting poi where SNR gives the max value"""
+    poi = np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
+    
+    """Processing the traces"""
     x_train = normalization(
         remove_avg(poi)
     )  # normalization(remove_avg(leakages)) #normalization(leakages)  # Normalization is used for improving the learning
@@ -34,7 +36,7 @@ if __name__ == "__main__":
     guess_range = 256
 
     """Loading the DL model mlp"""
-    model = mlp_short()
+    model = mlp_short(len_samples)
     # model = model_cnn(len_samples, guess_range)
 
     """Profiling"""
@@ -45,7 +47,7 @@ if __name__ == "__main__":
         epochs=100,
         batch_size=128,
         validation_split=0.02,
-    )  # 400, 50
+    )
 
     """Save model"""
     profile_engine.save_model("model_mlp.keras")

@@ -30,9 +30,11 @@ def mlp_ascad(node=200, layer_nb=5):
 
 
 ### In case of using only snr peaks
-def mlp_short():
+def mlp_short(len_samples):
     model = Sequential()
-    model.add(Dense(20, input_dim=15, activation="relu"))
+    model.add(Dense(20, input_dim=len_samples, activation="relu"))
+    # GaussianNoise(stddev)
+    BatchNormalization()
     model.add(Dense(50, activation="relu"))
     model.add(Dense(256, activation="softmax"))
     optimizer = RMSprop(lr=0.00001)
