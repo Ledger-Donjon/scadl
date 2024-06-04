@@ -17,7 +17,6 @@ def leakage_model(metadata):
     return sbox[metadata["plaintext"][2] ^ metadata["key"][2]]
 
 
-
 if __name__ == "__main__":
     """loading traces and metadata for training"""
     directory = "D:/ascad/ASCAD.h5"
@@ -27,7 +26,7 @@ if __name__ == "__main__":
 
     """Selecting poi where SNR gives the max value"""
     poi = np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
-    
+
     """Processing the traces"""
     x_train = normalization(
         remove_avg(poi)

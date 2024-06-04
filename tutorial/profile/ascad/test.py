@@ -15,7 +15,7 @@ def rot(traces):
     tmp_traces = traces
     for i, trace in enumerate(traces):
         index = np.random.randint(len_trace)
-        tmp_traces[i] = np.concatenate((trace[index:], trace[0: index]))
+        tmp_traces[i] = np.concatenate((trace[index:], trace[0:index]))
     return tmp_traces
 
 
@@ -28,7 +28,6 @@ if __name__ == "__main__":
 
     """correct key value to test it's rank"""
     correct_key = metadata["key"][0][2]
-
 
     """Selecting poi where SNR gives the max value and it should have 
     the same index like what is used in the profiling phase """

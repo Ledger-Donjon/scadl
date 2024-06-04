@@ -1,14 +1,13 @@
 from scadl.profile import profileEngine
 from scadl import sbox, normalization
 import sys
+import numpy as np
 
 sys.path.append("../../models")
-from cw_models import *
+from cw_models import model_mlp # type: ignore
 
 
 """Leakage function"""
-
-
 def leakage_model(metadata):
     """leakage model for sbox[0]"""
     return sbox[metadata["plaintext"][0] ^ metadata["key"][0]]
