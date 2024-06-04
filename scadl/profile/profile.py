@@ -28,6 +28,10 @@ from sklearn.model_selection import train_test_split
 
 
 class profileEngine(Model):
+    """This class is used for normal profiling.
+    It takes two argiments: the DL model and the leakage model 
+    """
+
     def __init__(self, model, leakage_model):
         super().__init__()
         self.model = model
@@ -36,6 +40,10 @@ class profileEngine(Model):
     def train(
         self, x_train, metadata, epochs=300, batch_size=100, validation_split=0.1
     ):
+        """This function is used to train the model
+        x_train: poi from leakages
+        metadata: the plaintexts, keys, ciphertexts used for profiling
+        """
         y_train = np.array([self.leakage_model(i) for i in metadata])
 
         y_train = keras.utils.to_categorical(y_train, 256)
@@ -47,18 +55,15 @@ class profileEngine(Model):
             validation_split=validation_split,
         )
 
-        # X_train, X_test, Y_train, Y_test = train_test_split(x_train, y_train, test_size=validation_split)
-        # self.history = self.model.fit(
-        #     X_train, Y_train, epochs=epochs, batch_size=batch_size, verbose=1,
-        #             validation_data=(X_test, Y_test)
-        # )
-
     def save_model(self, name):
         self.model.save(name)
 
 
 class matchEngine(Model):
+    """This class is used for testing the attack after the profiling phase"""
     def __init__(self, model, leakage_model):
+        """model: after training the profile model this is fed to this class to test the attack
+        leakage_model: The same leakage model used for profiling"""
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
@@ -70,7 +75,8 @@ class matchEngine(Model):
         x_rank = []
         self.predictions = self.model.predict(x_test)
         rank_array = np.zeros(guess_range)
-
+        
+        """success rate is calcultaed as shown in https://eprint.iacr.org/2006/139.pdf"""
         for i in range(0, len(x_test), step):
             chunk = self.predictions[i : i + step]
             chunk_metdata = metadata[i : i + step]
@@ -79,8 +85,7 @@ class matchEngine(Model):
                 for guess in range(guess_range):
                     index = self.leakage_model(chunk_metdata[row], guess)
                     if chunk[row, index] != 0:
-                        rank_array[guess] += np.log2(chunk[row, index])
-                    # guess_predictions[row, guess] = self.predictions[row, guess]
+                        rank_array[guess] += np.log2(chunk[row, index])     # sum of np.log (predictions)
             tmp_rank = np.where(sorted(rank_array)[::-1] == rank_array[correct_key])[0][
                 0
             ]

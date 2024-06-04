@@ -39,7 +39,7 @@ Scadl uses two different datasets for its tutorial. The first dataset is collect
 The second dataset is [ASCAD](https://github.com/ANSSI-FR/ASCAD/tree/master/ATMEGA_AES_v1) which is widely used in the side-channel attacks (SCAs) domain.
 
 ###  Labeling
-we consider for all the experiments, one or several AES Sbox for labeling the DL architectures
+we consider for all the experiments, one or several AES Sbox for labeling the DL architectures.
 ```python 
 def  leakage_model(metadata):
 """leakage model for sbox[0]"""
