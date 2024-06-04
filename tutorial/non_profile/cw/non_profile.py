@@ -29,7 +29,7 @@ if __name__ == "__main__":
     x_train = normalization(avg)
 
     """Selecting the model"""
-    key_range = 2
+    # key_range = 2
     len_samples = x_train.shape[1]
     model = mlp_non_profiling()
     # model = cnn_best(len_samples, key_range)
@@ -41,6 +41,7 @@ if __name__ == "__main__":
         metadata=metadata,
         hist_acc="val_accuracy",
         key_range=range(0, 256),
+        num_classes=2,
         epochs=50,
         batch_size=1000,
     )

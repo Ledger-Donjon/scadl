@@ -34,7 +34,7 @@ class profileEngine(Model):
         self.model = model
         self.leakage_model = leakage_model
 
-    def train(self, x_train, metadata, key_range, hist_acc, epochs=300, batch_size=100):
+    def train(self, x_train, metadata, key_range, num_classes, hist_acc, epochs=300, batch_size=100):
         """
         x_train, metadata: leakages and additional data used for training.
         From the paper (https://tches.iacr.org/index.php/TCHES/article/view/7387/6559), the attack may work when hist_acc= 'accuracy'
@@ -44,7 +44,7 @@ class profileEngine(Model):
         for index, guess in enumerate(key_range):
             print(f"Trying guess = {guess}")
             y_train = np.array([self.leakage_model(i, guess) for i in metadata])
-            y = keras.utils.to_categorical(y_train, 2)
+            y = keras.utils.to_categorical(y_train, num_classes)
             self.history = self.model.fit(
                 x_train, y, epochs=epochs, batch_size=batch_size, validation_split=0.1
             )
