@@ -1,4 +1,3 @@
-
 from keras.models import Sequential, Model
 from keras.layers import Conv1D, Dense, Flatten
 from keras.layers import Dropout
