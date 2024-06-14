@@ -17,34 +17,48 @@
 # Copyright 2024 Karim ABDELLATIF, PhD, Ledger - karim.abdellatif@ledger.fr
 
 
+from ..augmentation import mixup, random_crop
 import numpy as np
 from keras.models import Model
 import keras
 
 
-class profileEngine(Model):
+class profileEngine:
     """This class is used for normal profiling.
     It takes two argiments: the DL model and the leakage model
     """
 
-    def __init__(self, model, leakage_model):
+    def __init__(self, model: Model, leakage_model):
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
 
+    def data_augmentation(self, func_aug):
+        self.data_aug = func_aug
+
     def train(
-        self, x_train, metadata, epochs=300, batch_size=100, validation_split=0.1
+        self,
+        x_train: np.ndarray,
+        metadata: np.ndarray,
+        epochs=300,
+        batch_size=100,
+        validation_split=0.1,
+        data_augmentation=False,
     ):
         """This function is used to train the model
         x_train: poi from leakages
         metadata: the plaintexts, keys, ciphertexts used for profiling
         """
         y_train = np.array([self.leakage_model(i) for i in metadata])
-
         y_train = keras.utils.to_categorical(y_train, 256)
+        if data_augmentation:
+            x, y = self.data_aug(x_train, y_train)
+        else:
+            x, y = x_train, y_train
+
         self.history = self.model.fit(
-            x_train,
-            y_train,
+            x,
+            y,
             epochs=epochs,
             batch_size=batch_size,
             validation_split=validation_split,

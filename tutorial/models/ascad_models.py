@@ -4,7 +4,7 @@ from keras.layers import Dropout
 from keras.optimizers import RMSprop
 import keras
 from keras.layers import Input, AveragePooling1D
-from keras.layers import BatchNormalization
+from keras.layers import BatchNormalization, Dropout, GaussianNoise
 
 
 # In case of using the overall 700 samples
@@ -28,8 +28,9 @@ def mlp_ascad(node=200, layer_nb=5):
 def mlp_short(len_samples):
     model = Sequential()
     model.add(Dense(20, input_dim=len_samples, activation="relu"))
-    # GaussianNoise(stddev)
+    # GaussianNoise(stddev=0.1)
     BatchNormalization()
+    Dropout(0.1)
     model.add(Dense(50, activation="relu"))
     model.add(Dense(256, activation="softmax"))
     optimizer = RMSprop(lr=0.00001)

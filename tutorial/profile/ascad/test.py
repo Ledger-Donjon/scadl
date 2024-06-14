@@ -38,8 +38,8 @@ if __name__ == "__main__":
 
     """Loading the DL model"""
     model = load_model("model_mlp.keras")
-    len_test = 500
-    no_trials = 20
+    len_test = 1000
+    no_trials = 200
     test_engine = matchEngine(model=model, leakage_model=leakage_model)
 
     for i in range(no_trials):

@@ -2,10 +2,10 @@ from scadl.profile import profileEngine
 from scadl import sbox, normalization
 import sys
 import numpy as np
+from scadl import mixup
 
 sys.path.append("../../models")
 from cw_models import model_mlp  # type: ignore
-
 
 """Leakage function"""
 
@@ -13,6 +13,15 @@ from cw_models import model_mlp  # type: ignore
 def leakage_model(metadata):
     """leakage model for sbox[0]"""
     return sbox[metadata["plaintext"][0] ^ metadata["key"][0]]
+
+
+"""Data augmenation"""
+
+
+def data_aug(x_train, y_train):
+    mix = mixup()
+    x, y = mix.generate(x_train=x_train, y_train=y_train, ratio=0.6)
+    return x, y
 
 
 if __name__ == "__main__":
@@ -37,7 +46,14 @@ if __name__ == "__main__":
 
     """Profiling"""
     profile_engine = profileEngine(model, leakage_model=leakage_model)
-    profile_engine.train(x_train=x_train, metadata=metadata, epochs=50, batch_size=100)
+    profile_engine.data_augmentation(data_aug)
+    profile_engine.train(
+        x_train=x_train,
+        metadata=metadata,
+        epochs=50,
+        batch_size=100,
+        data_augmentation=False,
+    )
 
     """Save model"""
     profile_engine.save_model("model_mlp.keras")
