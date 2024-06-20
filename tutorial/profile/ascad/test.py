@@ -34,12 +34,14 @@ if __name__ == "__main__":
     poi = np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
     poi = normalization(
         remove_avg(poi)
-    )  # normalization(remove_avg(leakages)) #normalization(leakages)  # Normalization is used for improving the learning
+    )  
+    
+    # Normalization is used for improving the learning
 
     """Loading the DL model"""
     model = load_model("model_mlp.keras")
     len_test = 1000
-    no_trials = 200
+    no_trials = 50
     test_engine = matchEngine(model=model, leakage_model=leakage_model)
 
     for i in range(no_trials):

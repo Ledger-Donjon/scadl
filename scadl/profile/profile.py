@@ -20,6 +20,7 @@
 from ..augmentation import mixup, random_crop
 import numpy as np
 from keras.models import Model
+from sklearn.model_selection import train_test_split
 import keras
 
 
@@ -56,12 +57,14 @@ class profileEngine:
         else:
             x, y = x_train, y_train
 
+        x_training, x_test, y_training, y_test = train_test_split(x, y, test_size=validation_split)
         self.history = self.model.fit(
-            x,
-            y,
+            x_training,
+            y_training,
             epochs=epochs,
             batch_size=batch_size,
-            validation_split=validation_split,
+            verbose=1,
+            validation_data=(x_test, y_test)
         )
 
     def save_model(self, name):
@@ -85,7 +88,6 @@ class matchEngine(Model):
         x_rank = []
         self.predictions = self.model.predict(x_test)
         rank_array = np.zeros(guess_range)
-
         """success rate is calcultaed as shown in https://eprint.iacr.org/2006/139.pdf"""
         for i in range(0, len(x_test), step):
             chunk = self.predictions[i : i + step]
@@ -101,8 +103,10 @@ class matchEngine(Model):
             tmp_rank = np.where(sorted(rank_array)[::-1] == rank_array[correct_key])[0][
                 0
             ]
+
             rank.append(tmp_rank)
             number_traces += step
             x_rank.append(number_traces)
 
         return np.array(rank), x_rank
+    

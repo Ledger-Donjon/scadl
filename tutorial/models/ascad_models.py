@@ -16,11 +16,24 @@ def mlp_ascad(node=200, layer_nb=5):
         # Dropout(0.2)    #Dropout(0.01)
         # BatchNormalization()
     model.add(Dense(256, activation="softmax"))
-
     optimizer = RMSprop(learning_rate=0.00001)
     model.compile(
         loss="categorical_crossentropy", optimizer=optimizer, metrics=["accuracy"]
     )
+    return model
+
+
+
+def mlp_best_best(node=600,layer_nb=6):                   #node=500
+    model = Sequential()
+    model.add(Dense(node, input_dim=700, activation='relu'))     #28   #node
+    for i in range(layer_nb-2):
+        model.add(Dense(node, activation='relu'))
+        Dropout(0.2)    #Dropout(0.01)
+        #BatchNormalization()
+    model.add(Dense(256, activation='softmax'))
+    optimizer = RMSprop(learning_rate=0.00001)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     return model
 
 
@@ -29,7 +42,7 @@ def mlp_short(len_samples):
     model = Sequential()
     model.add(Dense(20, input_dim=len_samples, activation="relu"))
     # GaussianNoise(stddev=0.1)
-    BatchNormalization()
+    # BatchNormalization()
     Dropout(0.1)
     model.add(Dense(50, activation="relu"))
     model.add(Dense(256, activation="softmax"))

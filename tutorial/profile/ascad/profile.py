@@ -1,5 +1,6 @@
 from scadl.profile import profileEngine
 from scadl import sbox, normalization
+# from lascar.tools.aes import sbox
 import sys
 import h5py
 from scadl.tools import remove_avg
@@ -20,10 +21,9 @@ def leakage_model(metadata):
 
 """Data augmenation"""
 
-
 def aug_mixup(x_train, y_train):
     mix = mixup()
-    x, y = mix.generate(x_train=x_train, y_train=y_train, ratio=3)
+    x, y = mix.generate(x_train=x_train, y_train=y_train, ratio=2, alpha=1)
     return x, y
 
 
@@ -58,9 +58,9 @@ if __name__ == "__main__":
     profile_engine.train(
         x_train=x_train,
         metadata=metadata,
-        epochs=300,
+        epochs=100,
         batch_size=128,
-        validation_split=0.02,
+        validation_split=0.1,
         data_augmentation=False,
     )
 
