@@ -72,7 +72,6 @@ if __name__ == "__main__":
 
     """Selecting the model"""
     model_dl = mlp_non_profiling(x_train.shape[1])
-    # model_dl = mlp_non_profiling(x_train.shape)
     # model = cnn_best(x_train.shape[1], key_range)
 
     """Non-profiling DL"""
