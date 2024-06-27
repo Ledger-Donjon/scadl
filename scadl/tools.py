@@ -539,17 +539,21 @@ inv_sbox = [
 ]
 
 
-def normalization(traces):
-    normalized_traces = np.zeros((traces.shape[0], traces.shape[1]), dtype=np.double)
-    min_valeu = np.min(traces)
-    max_value = np.max(traces)
-    return (traces - min_valeu) / (max_value - min_valeu)
+def normalization(data):
+    """It accepts data as a np array and returns normlized data between 0 and 1"""
+    return (data - np.min(data, axis=0)) / (np.max(data, axis=0) - np.min(data, axis=0))
 
 
 def remove_avg(traces):
+    """It takes traces as a np array and returns the subtracted average traces"""
     avg = np.average(traces, axis=0)
     return traces - avg
 
 
-def gen_labels(leakage_model, metadata, key_byte):
+def gen_labels(leakage_model, metadata: np.array, key_byte):
+    """It is used to generate labels from metadata
+    It takes leakage_model as a leakage function,
+    metadata,
+    key_byte: oreder of attacked key.
+    It returns the labels used for DL"""
     return np.array([leakage_model(i, key_byte=key_byte) for i in metadata])

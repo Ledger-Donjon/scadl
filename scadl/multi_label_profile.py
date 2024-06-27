@@ -21,26 +21,35 @@ import numpy as np
 from keras.models import Model
 
 
-class multiLabelEngine(Model):
-    def __init__(self, model):
+class MultiLabelProfile:
+    """This class is used for multi-label classification"""
+
+    def __init__(self, model: Model):
         super().__init__()
         self.model = model
-        # self.leakage_model = leakage_model
 
-    def train(self, x_train, y_train, epochs=300, batch_size=100):
+    def train(self, x_train: np.array, y_train: np.array, epochs=300, batch_size=100):
+        """This function accepts
+        x_train: np.array,
+        y_train: np.array,
+        """
         self.model.fit(
             x_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.1
         )
 
-    def save_model(self, name):
+    def save_model(self, name: str):
+        """It takes a string name and saves the model"""
         self.model.save(name)
 
 
-class matchEngine(Model):
-    def __init__(self, model, leakage_model):
+class MatchMultiLabel:
+    """This class is used for testing the attack"""
+
+    def __init__(self, model: Model, leakage_model):
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
+        self.predictions = None
 
     def match(
         self, x_test, metadata, guess_range, correct_key, step, prob_range=(0, 256)
@@ -64,7 +73,6 @@ class matchEngine(Model):
                     index = self.leakage_model(chunk_metdata[row], guess)
                     if chunk[row, index] != 0:
                         rank_array[guess] += np.log(chunk[row, index])
-                    # guess_predictions[row, guess] = self.predictions[row, guess]
             tmp_rank = np.where(sorted(rank_array)[::-1] == rank_array[correct_key])[0][
                 0
             ]

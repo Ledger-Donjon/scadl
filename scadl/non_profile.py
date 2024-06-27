@@ -22,13 +22,16 @@ from keras.models import Model
 import keras
 
 
-class profileEngine(Model):
-    def __init__(self, model, leakage_model):
-        """model: DL model(cnn/mlp)
-        leakage_model: a function used for labeling"""
+class NonProfile:
+    """This class is used for Non-profiling DL attacks proposed in https://eprint.iacr.org/2018/196.pdf"""
+
+    def __init__(self, model: Model, leakage_model):
+        """It takes a model and a leakagae_model function"""
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
+        self.acc = None
+        self.history = None
 
     def train(
         self,
@@ -45,7 +48,6 @@ class profileEngine(Model):
         From the paper (https://tches.iacr.org/index.php/TCHES/article/view/7387/6559), the attack may work when hist_acc= 'accuracy'
         or 'val_accuracy'"""
         self.acc = np.zeros((len(key_range), epochs), dtype=np.double)
-        """Trying possible keys"""
         for index, guess in enumerate(key_range):
             print(f"Trying guess = {guess}")
             y_train = np.array([self.leakage_model(i, guess) for i in metadata])
