@@ -38,10 +38,9 @@ def aug_crop(x, y):
 def mlp_short(len_samples):
     """It returns an MLP model"""
     model = Sequential()
-    model.add(Dense(50, input_dim=len_samples, activation="relu"))
-    model.add(Dense(20, activation="relu"))
-    # model.add(Dense(300, activation="relu"))
-    # model.add(Dense(300, activation="relu"))
+    model.add(Dense(20, input_dim=len_samples, activation="relu"))
+    # BatchNormalization()
+    model.add(Dense(50, activation="relu"))
     model.add(Dense(256, activation="softmax"))
     optimizer = "adam"  # RMSprop(learning_rate=0.00001) #tf.keras.optimizers.Adam() # RMSprop(lr=0.00001)
     model.compile(
@@ -64,11 +63,12 @@ if __name__ == "__main__":
     metadata = file["Profiling_traces"]["metadata"][:]
 
     """Selecting poi where SNR gives the max value"""
-    poi = np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
+    poi = leakages # np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
     # poi = leakages - np.mean(leakages, axis=0)
 
     """Processing the traces"""
-    x_train = normalization(remove_avg(poi))
+    x_train = normalization(remove_avg(poi), feature_range=(-1, 1))
+    # x_train = handy_normalization(remove_avg(poi))
     GUESS_RANGE = 256
 
     """Loading the DL model mlp"""
@@ -83,7 +83,7 @@ if __name__ == "__main__":
         metadata=metadata,
         epochs=50,
         batch_size=128,
-        validation_split=0.02,
+        validation_split=0.1,
         data_augmentation=False,
     )
     profile_engine.save_model("model.keras")

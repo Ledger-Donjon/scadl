@@ -12,6 +12,7 @@ def leakage_model(data, guess):
     return sbox[guess ^ data["plaintext"][2]]
 
 
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Need to specify the location of training data")
@@ -28,8 +29,8 @@ if __name__ == "__main__":
 
     """Selecting poi where SNR gives the max value and it should have 
     the same index like what is used in the profiling phase """
-    poi = np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
-    poi = normalization(remove_avg(poi))
+    poi = leakages # np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
+    poi = normalization(remove_avg(poi), feature_range=(-1, 1))
 
     # Normalization is used for improving the learning
 

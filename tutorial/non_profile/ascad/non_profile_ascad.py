@@ -45,7 +45,7 @@ def mlp_short(len_samples):
     model.add(Dense(50, input_dim=len_samples, activation="relu"))
     model.add(Dense(20, activation="relu"))
     model.add(Dense(2, activation="softmax"))
-    optimizer = "adam"  # RMSprop(lr=0.00001)
+    optimizer = "adam" 
     model.compile(
         loss="categorical_crossentropy",
         optimizer=optimizer,
@@ -54,19 +54,6 @@ def mlp_short(len_samples):
     return model
 
 
-def mlp_ascad(node=600, layer_nb=6):
-    model = Sequential()
-    model.add(Dense(node, input_dim=700, activation="relu"))
-    for i in range(layer_nb - 2):
-        model.add(Dense(node, activation="relu"))
-        # Dropout(0.1)    #Dropout(0.01)
-        # BatchNormalization()
-    model.add(Dense(2, activation="softmax"))
-    optimizer = "adam"  # RMSprop(lr=0.00001)
-    model.compile(
-        loss="categorical_crossentropy", optimizer=optimizer, metrics=["accuracy"]
-    )
-    return model
 
 
 if __name__ == "__main__":
@@ -82,13 +69,9 @@ if __name__ == "__main__":
     correct_key = metadata["key"][0][TARGET_BYTE]
 
     """Subtracting average from traces + normalization"""
-    poi = np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
-    avg = remove_avg(leakages)
-    x_train = avg
-
+    x_train = normalization(remove_avg(leakages), feature_range=(-1, 1))
     """Selecting the model"""
     model_dl = mlp_short(x_train.shape[1])
-    # model_dl = mlp_non_profiling(x_train.shape)
     # model = cnn_best(x_train.shape[1], key_range)
 
     """Non-profiling DL"""
@@ -97,9 +80,9 @@ if __name__ == "__main__":
         x_train=x_train,
         metadata=metadata,
         hist_acc="val_accuracy",
-        key_range=range(0, 256),
+        key_range=range(50, 58),
         num_classes=2,
-        epochs=100,
+        epochs=50,
         batch_size=1000,
     )
 
@@ -107,7 +90,7 @@ if __name__ == "__main__":
     guessed_key = np.argmax(np.max(acc, axis=1))
     print(f"guessed key = {guessed_key}")
     plt.plot(acc.T, "grey", linewidth=2)
-    plt.plot(acc[4], "black", linewidth=2)
+    plt.plot(acc[correct_key], "black", linewidth=2)
     plt.xlabel("Number of epochs", fontsize=40)
     plt.ylabel("Accuracy ", fontsize=40)
     plt.xticks(fontsize=25)

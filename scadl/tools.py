@@ -539,18 +539,19 @@ inv_sbox = [
 ]
 
 
-def normalization(data):
+def normalization(data: np.ndarray, feature_range=(0, 1)):
     """It accepts data as a np array and returns normlized data between 0 and 1"""
-    return (data - np.min(data, axis=0)) / (np.max(data, axis=0) - np.min(data, axis=0))
+    x_std = (data - np.min(data, axis=0)) / (np.max(data, axis=0) - np.min(data, axis=0))
+    return x_std * (max(feature_range) - min(feature_range)) + min(feature_range)
 
 
-def remove_avg(traces):
+def remove_avg(traces: np.ndarray):
     """It takes traces as a np array and returns the subtracted average traces"""
     avg = np.average(traces, axis=0)
     return traces - avg
 
 
-def gen_labels(leakage_model, metadata: np.array, key_byte):
+def gen_labels(leakage_model, metadata: np.ndarray, key_byte: int):
     """It is used to generate labels from metadata
     It takes leakage_model as a leakage function,
     metadata,
