@@ -16,10 +16,13 @@
 #
 # Copyright 2024 Karim ABDELLATIF, PhD, Ledger - karim.abdellatif@ledger.fr
 
+from collections.abc import Callable
+from typing import Optional
+
+import keras
 import numpy as np
 from keras.models import Model
 from sklearn.model_selection import train_test_split
-import keras
 
 
 class Profile:
@@ -27,14 +30,14 @@ class Profile:
     It takes two argiments: the DL model and the leakage model
     """
 
-    def __init__(self, model: Model, leakage_model):
+    def __init__(self, model: Model, leakage_model: Callable):
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
-        self.data_aug = None
+        self.data_aug: Optional[Callable] = None
         self.history = None
 
-    def data_augmentation(self, func_aug):
+    def data_augmentation(self, func_aug: Callable):
         """to pass the self"""
         self.data_aug = func_aug
 
@@ -43,15 +46,18 @@ class Profile:
         x_train: np.ndarray,
         metadata: np.ndarray,
         guess_range: int,
-        epochs=300,
-        batch_size=100,
-        validation_split=0.1,
-        data_augmentation=False,
+        epochs: int = 300,
+        batch_size: int = 100,
+        validation_split: float = 0.1,
+        data_augmentation: bool = False,
     ):
         """This function is used to train the model
         x_train: poi from leakages
         metadata: the plaintexts, keys, ciphertexts used for profiling
         """
+
+        assert self.data_aug is not None
+
         y_train = np.array([self.leakage_model(i) for i in metadata])
         y_train = keras.utils.to_categorical(y_train, guess_range)
         if data_augmentation:
@@ -71,7 +77,7 @@ class Profile:
             validation_data=(x_test, y_test),
         )
 
-    def save_model(self, name: str) -> None:
+    def save_model(self, name: str):
         """It accepts a str to save the file name"""
         self.model.save(name)
 
@@ -79,17 +85,24 @@ class Profile:
 class Match:
     """This class is used for testing the attack after the profiling phase"""
 
-    def __init__(self, model: Model, leakage_model):
+    def __init__(self, model: Model, leakage_model: Callable):
         """model: after training the profile model this is fed to this class to test the attack
         leakage_model: The same leakage model used for profiling"""
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
-        self.predictions = None
+        self.predictions: Optional[np.ndarray] = None
 
-    def match(self, x_test, metadata, guess_range, correct_key, step):
+    def match(
+        self,
+        x_test: np.ndarray,
+        metadata: np.ndarray,
+        guess_range: int,
+        correct_key: int,
+        step: int,
+    ) -> tuple[np.ndarray, list[int]]:
         """They key rank is implemnted based on the sum of np.log() of the prob
-        success rate is calcultaed as shown in https://eprint.iacr.org/2006/139.pdf"""
+        success rate is calculated as shown in https://eprint.iacr.org/2006/139.pdf"""
         rank = []
         number_traces = 0
         x_rank = []

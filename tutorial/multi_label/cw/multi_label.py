@@ -1,19 +1,22 @@
 import sys
+
+import keras
 import numpy as np
-from sklearn.preprocessing import MultiLabelBinarizer
+from keras.layers import Conv1D, Dense, Flatten, MaxPooling1D
 from keras.models import Sequential
-from keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
+from sklearn.preprocessing import MultiLabelBinarizer
+
 from scadl.multi_label_profile import MultiLabelProfile
-from scadl.tools import sbox, gen_labels
+from scadl.tools import gen_labels, sbox
 
 
-def mlp_multi_label(node=50, layer_nb=4):
-    """It takes node as the number of neurons per layer and number of layres.
+def mlp_multi_label(nb_neurons: int = 50, nb_layers: int = 4) -> keras.Model:
+    """It takes nb_neurons as the number of neurons per layer and number of layres.
     It returns an MLP model"""
     model = Sequential()
-    model.add(Dense(node, activation="relu"))
-    for _ in range(layer_nb - 2):
-        model.add(Dense(node, activation="relu"))
+    model.add(Dense(nb_neurons, activation="relu"))
+    for _ in range(nb_layers - 2):
+        model.add(Dense(nb_neurons, activation="relu"))
         # Dropout(0.1)
         # BatchNormalization()
     model.add(Dense(512, activation="sigmoid"))
@@ -22,7 +25,7 @@ def mlp_multi_label(node=50, layer_nb=4):
     return model
 
 
-def cnn_multi_label(len_samples, guess_range):
+def cnn_multi_label(len_samples: int, guess_range: int) -> keras.Model:
     """It takes len of samples and guess range.
     It returns a CNN model"""
     model = Sequential()

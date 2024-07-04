@@ -1,21 +1,23 @@
 import sys
+
+import keras
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import tqdm
 import tensorflow as tf
-from keras.models import Sequential
 from keras.layers import Dense
-from scadl.non_profile import NonProfile
-from scadl.tools import sbox, normalization, remove_avg
+from keras.models import Sequential
+from tqdm import tqdm
 
+from scadl.non_profile import NonProfile
+from scadl.tools import normalization, remove_avg, sbox
 
 TARGET_BYTE = 0
 
 
-def mlp_non_profiling(len_smaples):
+def mlp_non_profiling(len_samples: int) -> keras.Model:
     """It retrurns an MLP model"""
     model = Sequential()
-    model.add(Dense(20, input_dim=len_smaples, activation=tf.nn.relu))
+    model.add(Dense(20, input_dim=len_samples, activation=tf.nn.relu))
     model.add(Dense(10, activation=tf.nn.relu))
     model.add(Dense(2, activation=tf.nn.softmax))
     model.compile(optimizer="adam", loss="mean_squared_error", metrics=["accuracy"])

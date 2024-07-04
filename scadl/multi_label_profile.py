@@ -17,6 +17,9 @@
 # Copyright 2024 Karim ABDELLATIF, PhD, Ledger - karim.abdellatif@ledger.fr
 
 
+from collections.abc import Callable
+from typing import Optional
+
 import numpy as np
 from keras.models import Model
 
@@ -28,7 +31,13 @@ class MultiLabelProfile:
         super().__init__()
         self.model = model
 
-    def train(self, x_train: np.array, y_train: np.array, epochs=300, batch_size=100):
+    def train(
+        self,
+        x_train: np.ndarray,
+        y_train: np.ndarray,
+        epochs: int = 300,
+        batch_size: int = 100,
+    ):
         """This function accepts
         x_train: np.array,
         y_train: np.array,
@@ -45,15 +54,21 @@ class MultiLabelProfile:
 class MatchMultiLabel:
     """This class is used for testing the attack"""
 
-    def __init__(self, model: Model, leakage_model):
+    def __init__(self, model: Model, leakage_model: Callable):
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
-        self.predictions = None
+        self.predictions: Optional[np.ndarray] = None
 
     def match(
-        self, x_test, metadata, guess_range, correct_key, step, prob_range=(0, 256)
-    ):
+        self,
+        x_test: np.ndarray,
+        metadata: np.ndarray,
+        guess_range: int,
+        correct_key: int,
+        step: int,
+        prob_range: tuple[int, int] = (0, 256),
+    ) -> tuple[list[np.ndarray], list[int]]:
         """
         x_test, metadata: data used for profiling.
         prob_range depending on the targeted byte
@@ -63,6 +78,7 @@ class MatchMultiLabel:
         number_traces = 0
         x_rank = []
         self.predictions = self.model.predict(x_test)[:, prob_range[0] : prob_range[1]]
+        assert self.predictions is not None
         rank_array = np.zeros(guess_range)
         for i in range(0, len(x_test), step):
             chunk = self.predictions[i : i + step]

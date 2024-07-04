@@ -1,14 +1,17 @@
 import sys
+
+import keras
 import numpy as np
 import tensorflow as tf
+from keras.layers import Conv1D, Dense, Flatten, MaxPooling1D
 from keras.models import Sequential
-from keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
-from scadl.profile import Profile
-from scadl.tools import sbox, normalization
+
 from scadl.augmentation import Mixup
+from scadl.profile import Profile
+from scadl.tools import normalization, sbox
 
 
-def model_mlp(sample_len, range_outer_layer):
+def model_mlp(sample_len: int, range_outer_layer: int) -> keras.Model:
     """It returns an MLP model"""
     model = Sequential()
     model.add(Dense(500, input_dim=sample_len, activation=tf.nn.relu))
@@ -24,7 +27,7 @@ def model_mlp(sample_len, range_outer_layer):
     return model
 
 
-def model_cnn(sample_len, range_outer_layer):
+def model_cnn(sample_len: int, range_outer_layer: int) -> keras.Model:
     """It takes sample_len and guess_range and passes a CNN model"""
     model = Sequential()
     model.add(
@@ -47,7 +50,9 @@ def leakage_model(data):
     return sbox[data["plaintext"][0] ^ data["key"][0]]
 
 
-def data_aug(x_training, y_training):
+def data_aug(
+    x_training: np.ndarray, y_training: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
     """It's used for data augmentation and it takes x, y as leakages and labels"""
     mix = Mixup()
     x, y = mix.generate(x_train=x_training, y_train=y_training, ratio=0.6)

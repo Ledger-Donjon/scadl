@@ -1,13 +1,15 @@
 import sys
-import h5py
-import numpy as np
-import matplotlib.pyplot as plt
-from tqdm import tqdm
-from keras.models import Sequential
-from keras.layers import Dense
-from scadl.tools import sbox, normalization, remove_avg
-from scadl.non_profile import NonProfile
 
+import h5py
+import keras
+import matplotlib.pyplot as plt
+import numpy as np
+from keras.layers import Dense
+from keras.models import Sequential
+from tqdm import tqdm
+
+from scadl.non_profile import NonProfile
+from scadl.tools import normalization, remove_avg, sbox
 
 TARGET_BYTE = 2
 
@@ -19,7 +21,7 @@ def leakage_model(data: np.ndarray, guess):
     # return hw(sbox[data['plaintext'][TARGET_BYTE] ^ guess]) #hw
 
 
-def mlp_short(len_samples):
+def mlp_short(len_samples: int) -> keras.Model:
     """It returns an MLP model"""
     model = Sequential()
     model.add(Dense(20, input_dim=len_samples, activation="relu"))

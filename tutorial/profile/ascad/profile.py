@@ -1,17 +1,14 @@
 import sys
+
 import h5py
-import numpy as np
-from keras.models import Sequential
-from keras.layers import Conv1D, Dense, Flatten
-from keras.layers import Dropout
-from keras.optimizers import RMSprop, Adam
 import keras
-from keras.layers import MaxPooling1D
-from scadl.profile import Profile
-from scadl.tools import sbox, normalization, remove_avg
+import numpy as np
+from keras.layers import Conv1D, Dense, Dropout, Flatten, MaxPooling1D
+from keras.models import Sequential
+
 from scadl.augmentation import Mixup, RandomCrop
-from sklearn.preprocessing import MinMaxScaler
-import tensorflow as tf
+from scadl.profile import Profile
+from scadl.tools import normalization, remove_avg, sbox
 
 
 def leakage_model(data):
@@ -19,37 +16,36 @@ def leakage_model(data):
     return sbox[data["plaintext"][2] ^ data["key"][2]]
 
 
-def aug_mixup(x, y):
+def aug_mixup(x: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Data augmenatation function based on mixup"""
     mix = Mixup()
     x, y = mix.generate(x_train=x, y_train=y, ratio=1, alpha=1)
     return x, y
 
 
-def aug_crop(x, y):
+def aug_crop(x: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     """Data augmenatation function based on RandomCrop"""
     mix = RandomCrop()
     x, y = mix.generate(x_train=x, y_train=y, ratio=1, window=5)
     return x, y
 
 
-def mlp_short(len_samples):
+def mlp_short(len_samples: int) -> keras.Model:
     """It returns an MLP model"""
     model = Sequential()
     model.add(Dense(20, input_dim=len_samples, activation="relu"))
     # BatchNormalization()
     model.add(Dense(50, activation="relu"))
     model.add(Dense(256, activation="softmax"))
-    optimizer = "adam"  # RMSprop(learning_rate=0.00001) #tf.keras.optimizers.Adam() # RMSprop(lr=0.00001)
     model.compile(
         loss="categorical_crossentropy",
-        optimizer=optimizer,
+        optimizer="adam",
         metrics=["accuracy"],
     )
     return model
 
 
-def model_cnn(sample_len, range_outer_layer):
+def model_cnn(sample_len: int, range_outer_layer: int) -> keras.Model:
     """It takes sample_len and guess_range and passes a CNN model"""
     model = Sequential()
     model.add(
