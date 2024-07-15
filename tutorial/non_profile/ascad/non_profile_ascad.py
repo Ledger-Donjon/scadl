@@ -63,9 +63,10 @@ if __name__ == "__main__":
     DIR = sys.argv[1]
 
     """loading traces and metadata for training"""
+    SIZE_TEST = 15000
     file = h5py.File(f"{DIR}/ASCAD.h5", "r")
-    leakages = np.array(file["Profiling_traces"]["traces"][:], dtype=np.int8)
-    metadata = file["Profiling_traces"]["metadata"][:]
+    leakages = np.array(file["Profiling_traces"]["traces"][:], dtype=np.int8)[0: SIZE_TEST]
+    metadata = file["Profiling_traces"]["metadata"][:][0: SIZE_TEST]
     correct_key = metadata["key"][0][TARGET_BYTE]
 
     """Subtracting average from traces + normalization"""
@@ -80,7 +81,7 @@ if __name__ == "__main__":
         x_train=x_train,
         metadata=metadata,
         hist_acc="val_accuracy",
-        key_range=range(50, 58),
+        key_range=range(0, 256),
         num_classes=2,
         epochs=50,
         batch_size=1000,
