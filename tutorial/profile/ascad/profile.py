@@ -48,14 +48,39 @@ def mlp_short(len_samples):
     )
     return model
 
+
 def model_cnn(sample_len, range_outer_layer):
     """It takes sample_len and guess_range and passes a CNN model"""
     model = Sequential()
-    model.add(Conv1D(filters=8, kernel_size=32, padding="same",  input_shape=(sample_len, 1), activation='relu'))
+    model.add(
+        Conv1D(
+            filters=8,
+            kernel_size=32,
+            padding="same",
+            input_shape=(sample_len, 1),
+            activation="relu",
+        )
+    )
     model.add(MaxPooling1D(pool_size=3))
-    model.add(Conv1D(filters=8, kernel_size=16, padding="same", input_shape=(sample_len, 1), activation='tanh'))    
+    model.add(
+        Conv1D(
+            filters=8,
+            kernel_size=16,
+            padding="same",
+            input_shape=(sample_len, 1),
+            activation="tanh",
+        )
+    )
     model.add(MaxPooling1D(pool_size=3))
-    model.add(Conv1D(filters=8, kernel_size=8, padding="same", input_shape=(sample_len, 1), activation='tanh'))    
+    model.add(
+        Conv1D(
+            filters=8,
+            kernel_size=8,
+            padding="same",
+            input_shape=(sample_len, 1),
+            activation="tanh",
+        )
+    )
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
     Dropout(0.1)
@@ -65,6 +90,7 @@ def model_cnn(sample_len, range_outer_layer):
         optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"]
     )
     return model
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
@@ -78,7 +104,9 @@ if __name__ == "__main__":
     metadata = file["Profiling_traces"]["metadata"][:]
 
     """Selecting poi where SNR gives the max value"""
-    poi = leakages # np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
+    poi = (
+        leakages  # np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
+    )
     """Processing the traces"""
     x_train = normalization(remove_avg(poi), feature_range=(-1, 1))
     # x_train = handy_normalization(remove_avg(poi))

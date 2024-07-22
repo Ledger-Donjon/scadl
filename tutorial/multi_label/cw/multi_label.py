@@ -12,7 +12,7 @@ def mlp_multi_label(node=50, layer_nb=4):
     It returns an MLP model"""
     model = Sequential()
     model.add(Dense(node, activation="relu"))
-    for i in range(layer_nb - 2):
+    for _ in range(layer_nb - 2):
         model.add(Dense(node, activation="relu"))
         # Dropout(0.1)
         # BatchNormalization()

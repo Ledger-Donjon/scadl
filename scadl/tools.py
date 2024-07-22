@@ -541,7 +541,9 @@ inv_sbox = [
 
 def normalization(data: np.ndarray, feature_range=(0, 1)):
     """It accepts data as a np array and returns normlized data between 0 and 1"""
-    x_std = (data - np.min(data, axis=0)) / (np.max(data, axis=0) - np.min(data, axis=0))
+    x_std = (data - np.min(data, axis=0)) / (
+        np.max(data, axis=0) - np.min(data, axis=0)
+    )
     return x_std * (max(feature_range) - min(feature_range)) + min(feature_range)
 
 

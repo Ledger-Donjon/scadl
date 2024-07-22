@@ -2,7 +2,6 @@ import sys
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
-from tqdm import tqdm
 from keras.models import Sequential, Model
 from keras.layers import Conv1D, Dense, Flatten
 from keras.layers import Dropout
@@ -14,6 +13,7 @@ from scadl.profile import Profile
 from scadl.tools import sbox, normalization, remove_avg
 from scadl.augmentation import Mixup, RandomCrop
 from scadl.non_profile import NonProfile
+
 
 TARGET_BYTE = 2
 
@@ -71,26 +71,34 @@ if __name__ == "__main__":
 
     """Subtracting average from traces + normalization"""
     x_train = normalization(remove_avg(leakages), feature_range=(-1, 1))
+    """Selecting the model"""
+    model_dl = mlp_short(x_train.shape[1])
+
     """Non-profiling DL"""
-    EPOCHS = 15
-    guess_range = range(0, 256)
-    acc = np.zeros((len(guess_range), EPOCHS))
-    profile_engine = NonProfile(leakage_model=leakage_model)
-    for index, guess in enumerate(tqdm(guess_range)):
+    range_key = range(0, 256)
+    EPOCHS = 20
+    acc = np.zeros((len(range_key), EPOCHS))
+    for index, guess in enumerate(range_key):
+        profile_engine = NonProfile(leakage_model=leakage_model)
+        model_dl = mlp_short(x_train.shape[1])
         acc[index] = profile_engine.train(
-            model=mlp_short(x_train.shape[1]),
+            model=model_dl,
             x_train=x_train,
             metadata=metadata,
             hist_acc="accuracy",
-            guess=guess,
+            key_range=range(guess, guess + 1),
             num_classes=2,
             epochs=EPOCHS,
             batch_size=1000,
         )
+
+    """Selecting the key with the highest accuracy key"""
     guessed_key = np.argmax(np.max(acc, axis=1))
     print(f"guessed key = {guessed_key}")
-    plt.plot(acc.T, "grey")
-    plt.plot(acc[34], "black")
-    plt.xlabel("Number of epochs")
-    plt.ylabel("Accuracy ")
+    plt.plot(acc.T, "grey", linewidth=2)
+    plt.plot(acc[correct_key], "black", linewidth=2)
+    plt.xlabel("Number of epochs", fontsize=40)
+    plt.ylabel("Accuracy ", fontsize=40)
+    plt.xticks(fontsize=25)
+    plt.yticks(fontsize=25)
     plt.show()

@@ -1,6 +1,7 @@
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 import tensorflow as tf
 from keras.models import Sequential
 from keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
@@ -21,39 +22,11 @@ def mlp_non_profiling(len_smaples):
     return model
 
 
-def mlp_best(node=200, inner_layers=4):
-    """It retrurns an MLP model"""
-    model = Sequential()
-    model.add(Dense(node, activation="relu"))  # 28   #node
-    for i in range(inner_layers):
-        model.add(Dense(node, activation="relu"))
-        # Dropout(0.1)  # Dropout(0.01)
-        # BatchNormalization()
-    model.add(Dense(2, activation="softmax"))
-    optimizer = "adam"  # keras.optimizers.Adam(learning_rate=0.01) #RMSprop(lr=0.00001)# 'adam'#RMSprop(lr=0.00001)
-    model.compile(
-        loss="mean_squared_error", optimizer=optimizer, metrics=["accuracy"]
-    )  # categorical_crossentropy  mean_squared_error
-    return model
-
-
-def cnn_best(len_samples, guess_range):
-    """It retrurns a CNN model"""
-    model = Sequential()
-    model.add(Conv1D(filters=20, kernel_size=5, input_shape=(len_samples, 1)))
-    model.add(MaxPooling1D(pool_size=5))
-    model.add(Flatten())
-    model.add(Dense(200, activation="relu"))
-    model.add(Dense(guess_range, activation="softmax"))
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
-    return model
-
-
-def leakage_model(metadata, guess):
+def leakage_model(data, guess):
     """It returns the leakage function"""
-    # return 1 & ((sbox[metadata["plaintext"][TARGET_BYTE] ^ guess]) >> 7) #msb
-    return 1 & ((sbox[metadata["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
-    # return hw(sbox[metadata['plaintext'][TARGET_BYTE] ^ guess]) #hw
+    # return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]) >> 7) #msb
+    return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
+    # return hw(sbox[data['plaintext'][TARGET_BYTE] ^ guess]) #hw
 
 
 if __name__ == "__main__":
@@ -68,31 +41,32 @@ if __name__ == "__main__":
 
     """Subtracting average from traces + normalization"""
     avg = remove_avg(leakages[:, 1315:1325])
-    x_train = normalization(avg)  # normalization(avg)
+    x_train = normalization(avg, feature_range=(0, 1))  # normalization(avg)
 
     """Selecting the model"""
     model_dl = mlp_non_profiling(x_train.shape[1])
     # model = cnn_best(x_train.shape[1], key_range)
 
     """Non-profiling DL"""
-    profile_engine = NonProfile(model_dl, leakage_model=leakage_model)
-    acc = profile_engine.train(
-        x_train=x_train,
-        metadata=metadata,
-        hist_acc="accuracy",
-        key_range=range(0, 256),
-        num_classes=2,
-        epochs=200,
-        batch_size=1000,
-    )
-
-    """Selecting the key with the highest accuracy key"""
+    EPOCHS = 20
+    key_range = range(0, 256)
+    acc = np.zeros((len(key_range), EPOCHS))
+    profile_engine = NonProfile(leakage_model=leakage_model)
+    for index, guess in enumerate(tqdm(key_range)):
+        acc[index] = profile_engine.train(
+            model=mlp_non_profiling(x_train.shape[1]),
+            x_train=x_train,
+            metadata=metadata,
+            guess=guess,
+            hist_acc="accuracy",
+            num_classes=2,
+            epochs=EPOCHS,
+            batch_size=1000,
+        )
     guessed_key = np.argmax(np.max(acc, axis=1))
     print(f"guessed key = {guessed_key}")
-    plt.plot(acc.T, "grey", linewidth=2)
-    plt.plot(acc[correct_key], "black", linewidth=2)
-    plt.xlabel("Number of epochs", fontsize=40)
-    plt.ylabel("Accuracy ", fontsize=40)
-    plt.xticks(fontsize=25)
-    plt.yticks(fontsize=25)
+    plt.plot(acc.T, "grey")
+    plt.plot(acc[correct_key], "black")
+    plt.xlabel("Number of epochs")
+    plt.ylabel("Accuracy ")
     plt.show()

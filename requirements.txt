@@ -5,3 +5,4 @@ numpy==1.22.0
 scikit_learn==1.4.1.post1
 setuptools==69.1.0
 tensorflow_intel==2.13.0
+tqdm==4.60.0

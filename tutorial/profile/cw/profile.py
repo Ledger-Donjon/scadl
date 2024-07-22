@@ -27,7 +27,11 @@ def model_mlp(sample_len, range_outer_layer):
 def model_cnn(sample_len, range_outer_layer):
     """It takes sample_len and guess_range and passes a CNN model"""
     model = Sequential()
-    model.add(Conv1D(filters=20, kernel_size=5, input_shape=(sample_len, 1), activation='tanh'))
+    model.add(
+        Conv1D(
+            filters=20, kernel_size=5, input_shape=(sample_len, 1), activation="tanh"
+        )
+    )
     model.add(MaxPooling1D(pool_size=6))
     model.add(Flatten())
     model.add(Dense(200, activation="relu"))
@@ -69,7 +73,7 @@ if __name__ == "__main__":
     if sys.argv[2] == "mlp":
         model_dl = model_mlp(sample_len=len_samples, range_outer_layer=GUESS_RANGE)
     else:
-        model_dl = model_cnn(len_samples, GUESS_RANGE)    
+        model_dl = model_cnn(len_samples, GUESS_RANGE)
     """Profiling"""
     profile_engine = Profile(model_dl, leakage_model=leakage_model)
     profile_engine.data_augmentation(data_aug)
