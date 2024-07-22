@@ -25,18 +25,6 @@ def leakage_model(data, guess):
     # return hw(sbox[data['plaintext'][TARGET_BYTE] ^ guess]) #hw
 
 
-def aug_mixup(x, y):
-    """Data augmenatation function based on mixup"""
-    mix = Mixup()
-    x, y = mix.generate(x_train=x, y_train=y, ratio=2, alpha=1)
-    return x, y
-
-
-def aug_crop(x, y):
-    """Data augmenatation function based on RandomCrop"""
-    mix = RandomCrop()
-    x, y = mix.generate(x_train=x, y_train=y, ratio=1, window=5)
-    return x, y
 
 
 def mlp_short(len_samples):
@@ -90,7 +78,7 @@ if __name__ == "__main__":
     guessed_key = np.argmax(np.max(acc, axis=1))
     print(f"guessed key = {guessed_key}")
     plt.plot(acc.T, "grey")
-    plt.plot(acc[34], "black")
+    plt.plot(acc[correct_key], "black")
     plt.xlabel("Number of epochs")
     plt.ylabel("Accuracy ")
     plt.show()
