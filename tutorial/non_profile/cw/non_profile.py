@@ -24,9 +24,7 @@ def mlp_non_profiling(len_smaples):
 
 def leakage_model(data, guess):
     """It returns the leakage function"""
-    # return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]) >> 7) #msb
     return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
-    # return hw(sbox[data['plaintext'][TARGET_BYTE] ^ guess]) #hw
 
 
 if __name__ == "__main__":
@@ -41,14 +39,13 @@ if __name__ == "__main__":
 
     """Subtracting average from traces + normalization"""
     avg = remove_avg(leakages[:, 1315:1325])
-    x_train = normalization(avg, feature_range=(0, 1))  # normalization(avg)
+    x_train = normalization(avg, feature_range=(0, 1)) 
 
     """Selecting the model"""
     model_dl = mlp_non_profiling(x_train.shape[1])
-    # model = cnn_best(x_train.shape[1], key_range)
 
     """Non-profiling DL"""
-    EPOCHS = 20
+    EPOCHS = 50
     key_range = range(0, 256)
     acc = np.zeros((len(key_range), EPOCHS))
     profile_engine = NonProfile(leakage_model=leakage_model)

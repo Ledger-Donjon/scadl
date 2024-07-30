@@ -29,7 +29,7 @@ if __name__ == "__main__":
     """Selecting poi where SNR gives the max value and it should have 
     the same index like what is used in the profiling phase """
     poi = (
-        leakages  # np.concatenate((leakages[:, 515:520], leakages[:, 148:158]), axis=1)
+        leakages  
     )
     poi = normalization(remove_avg(poi), feature_range=(-1, 1))
 

@@ -109,7 +109,6 @@ if __name__ == "__main__":
     )
     """Processing the traces"""
     x_train = normalization(remove_avg(poi), feature_range=(-1, 1))
-    # x_train = handy_normalization(remove_avg(poi))
     GUESS_RANGE = 256
     """Loading the DL model mlp"""
     if sys.argv[2] == "mlp":

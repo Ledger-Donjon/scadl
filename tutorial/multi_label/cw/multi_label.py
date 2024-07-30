@@ -41,7 +41,6 @@ def leakage_model(data, key_byte):
 
 
 if __name__ == "__main__":
-    # directory = "D:/stm32f3_aes_unprotected"
     if len(sys.argv) != 2:
         print("Need to specify the location of training data")
         exit()
