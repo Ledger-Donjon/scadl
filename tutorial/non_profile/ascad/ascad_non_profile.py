@@ -3,20 +3,16 @@ import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-from keras.models import Sequential, Model
-from keras.layers import Conv1D, Dense, Flatten
-from keras.layers import Dropout
-from keras.optimizers import RMSprop
-import keras
-from keras.layers import Input, AveragePooling1D
-from keras.layers import BatchNormalization, Dropout, GaussianNoise
-from scadl.profile import Profile
+from keras.models import Sequential
+from keras.layers import Dense
 from scadl.tools import sbox, normalization, remove_avg
-from scadl.augmentation import Mixup, RandomCrop
 from scadl.non_profile import NonProfile
 
 
-def leakage_model(data, guess):
+TARGET_BYTE = 2
+
+
+def leakage_model(data: np.ndarray, guess):
     """It returns the leakage function"""
     # return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]) >> 7) #msb
     return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
@@ -46,7 +42,6 @@ if __name__ == "__main__":
 
     """loading traces and metadata for training"""
     SIZE_TEST = 20000
-    TARGET_BYTE = 2
     file = h5py.File(f"{DIR}/ASCAD.h5", "r")
     leakages = np.array(file["Profiling_traces"]["traces"][:], dtype=np.int8)[
         0:SIZE_TEST
