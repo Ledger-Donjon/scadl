@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     """Subtracting average from traces + normalization"""
     avg = remove_avg(leakages[:, 1315:1325])
-    x_train = normalization(avg, feature_range=(0, 1)) 
+    x_train = normalization(avg, feature_range=(0, 1))
 
     """Selecting the model"""
     model_dl = mlp_non_profiling(x_train.shape[1])

@@ -42,6 +42,7 @@ class Profile:
         self,
         x_train: np.ndarray,
         metadata: np.ndarray,
+        guess_range: int,
         epochs=300,
         batch_size=100,
         validation_split=0.1,
@@ -52,7 +53,7 @@ class Profile:
         metadata: the plaintexts, keys, ciphertexts used for profiling
         """
         y_train = np.array([self.leakage_model(i) for i in metadata])
-        y_train = keras.utils.to_categorical(y_train, 256)
+        y_train = keras.utils.to_categorical(y_train, guess_range)
         if data_augmentation:
             x, y = self.data_aug(x_train, y_train)
         else:
@@ -108,9 +109,7 @@ class Match:
             tmp_rank = np.where(sorted(rank_array)[::-1] == rank_array[correct_key])[0][
                 0
             ]
-
             rank.append(tmp_rank)
             number_traces += step
             x_rank.append(number_traces)
-
         return np.array(rank), x_rank

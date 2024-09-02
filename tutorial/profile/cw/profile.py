@@ -80,6 +80,7 @@ if __name__ == "__main__":
     profile_engine.train(
         x_train=x_train,
         metadata=metadata,
+        guess_range=256,
         epochs=50,
         batch_size=100,
         data_augmentation=False,

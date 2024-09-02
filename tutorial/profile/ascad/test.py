@@ -28,9 +28,7 @@ if __name__ == "__main__":
 
     """Selecting poi where SNR gives the max value and it should have 
     the same index like what is used in the profiling phase """
-    poi = (
-        leakages  
-    )
+    poi = leakages
     poi = normalization(remove_avg(poi), feature_range=(-1, 1))
 
     # Normalization is used for improving the learning
@@ -60,9 +58,11 @@ if __name__ == "__main__":
     avg_rank = avg_rank / TRIALS
 
     """Plotting the result"""
-    plt.plot(number_traces, avg_rank, "black", linewidth=5)
-    plt.xlabel("Number of traces", fontsize=40)
-    plt.ylabel("Average rank of K[2] ", fontsize=40)
+    FONT_SIZE = 2
+    LINE_WIDTH = 2
+    plt.plot(number_traces, avg_rank, "black", linewidth=LINE_WIDTH)
+    plt.xlabel("Number of traces", fontsize=FONT_SIZE)
+    plt.ylabel("Average rank of K[2] ", fontsize=FONT_SIZE)
     plt.xticks(fontsize=25)
     plt.yticks(fontsize=25)
     plt.show()

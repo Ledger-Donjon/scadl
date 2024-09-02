@@ -45,9 +45,7 @@ if __name__ == "__main__":
     )
 
     """Plotting the key rank"""
-    plt.plot(number_traces, rank, "black", linewidth=5)
-    plt.xlabel("Number of traces", fontsize=40)
-    plt.ylabel("Average rank of K[1] ", fontsize=40)
-    plt.xticks(fontsize=25)
-    plt.yticks(fontsize=25)
+    plt.plot(number_traces, rank, "black")
+    plt.xlabel("Number of traces")
+    plt.ylabel("Average rank of K[1] ")
     plt.show()

@@ -15,16 +15,12 @@ from scadl.tools import sbox, normalization, remove_avg
 from scadl.augmentation import Mixup, RandomCrop
 from scadl.non_profile import NonProfile
 
-TARGET_BYTE = 2
-
 
 def leakage_model(data, guess):
     """It returns the leakage function"""
     # return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]) >> 7) #msb
     return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
     # return hw(sbox[data['plaintext'][TARGET_BYTE] ^ guess]) #hw
-
-
 
 
 def mlp_short(len_samples):
@@ -50,6 +46,7 @@ if __name__ == "__main__":
 
     """loading traces and metadata for training"""
     SIZE_TEST = 20000
+    TARGET_BYTE = 2
     file = h5py.File(f"{DIR}/ASCAD.h5", "r")
     leakages = np.array(file["Profiling_traces"]["traces"][:], dtype=np.int8)[
         0:SIZE_TEST

@@ -41,7 +41,7 @@ def leakage_model(data, key_byte):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 3:
         print("Need to specify the location of training data")
         exit()
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     leakages = np.load(DIR + "/train/traces.npy")
     metadata = np.load(DIR + "/train/combined_train.npy")
     size_profiling = len(metadata)
-    """poi for sbox[p0^k0] and sbox[p1^k1] -> k[0] and k[1]"""
+    """poi for sbox[p0^k0] and sbox[p1^k1]"""
     poi = np.concatenate((leakages[:, 1315:1325], leakages[:, 1490:1505]), axis=1)
     """"generate labels"""
     y_0 = gen_labels(
@@ -66,8 +66,10 @@ if __name__ == "__main__":
     labels_fit = label.fit_transform(combined_labels)
     """load model"""
     GUESS_RANGE = 512
-    # model_dl = mlp_multi_label()
-    model_dl = cnn_multi_label(poi.shape[1], GUESS_RANGE)
+    if sys.argv[2] == "mlp":
+        model_dl = mlp_multi_label()
+    else:
+        model_dl = cnn_multi_label(poi.shape[1], GUESS_RANGE)
 
     """call multi-label profiling engine"""
     profile = MultiLabelProfile(model_dl)

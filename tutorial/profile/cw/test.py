@@ -28,9 +28,11 @@ if __name__ == "__main__":
         x_test=poi, metadata=metadata, guess_range=256, correct_key=correct_key, step=1
     )
     """Plotting the result"""
-    plt.plot(number_traces, rank, "black", linewidth=5)
-    plt.xlabel("Number of traces", fontsize=40)
-    plt.ylabel("Average rank of K[0] ", fontsize=40)
+    FONT_SIZE = 2
+    LINE_WIDTH = 2
+    plt.plot(number_traces, rank, "black", linewidth=LINE_WIDTH)
+    plt.xlabel("Number of traces", fontsize=FONT_SIZE)
+    plt.ylabel("Average rank of K[0] ", fontsize=FONT_SIZE)
     plt.xticks(fontsize=25)
     plt.yticks(fontsize=25)
     plt.show()
