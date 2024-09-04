@@ -4,7 +4,7 @@ import numpy as np
 from tqdm import tqdm
 import tensorflow as tf
 from keras.models import Sequential
-from keras.layers import Conv1D, MaxPooling1D, Dense, Flatten
+from keras.layers import Dense
 from scadl.non_profile import NonProfile
 from scadl.tools import sbox, normalization, remove_avg
 
