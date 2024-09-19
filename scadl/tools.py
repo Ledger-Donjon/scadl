@@ -62,20 +62,47 @@ inv_sbox = np.array([
 # fmt: on
 
 
+def is_valid(data: np.ndarray) -> bool:
+    """Check if all elements of :data: are valid (real values without nan)."""
+
+    # np.isreal return True for nan
+    return np.isreal(data).all() and not np.isnan(data).any()
+
+
 def normalization(
-    data: np.ndarray, feature_range: tuple[float, float] = (0, 1)
+    data: np.ndarray, feature_range: tuple[float, float] = (0, 1), check: bool = True
 ) -> np.ndarray:
-    """It accepts data as a np array and returns normlized data between 0 and 1"""
-    x_std = (data - np.min(data, axis=0)) / (
-        np.max(data, axis=0) - np.min(data, axis=0)
-    )
-    return x_std * (max(feature_range) - min(feature_range)) + min(feature_range)
+    """Normalize :data: between :feature_range[0]: and :feature_range[1]:.
+
+    If :check: is True, the result is checked for invalid values.
+    """
+    assert feature_range[0] < feature_range[1]
+
+    data = (data - np.min(data, axis=0)) / (np.max(data, axis=0) - np.min(data, axis=0))
+    data = data * (feature_range[1] - feature_range[0]) + feature_range[0]
+
+    if check:
+        assert is_valid(data)
+
+    return data
+
+
+def standardize(data: np.ndarray, check: bool = True) -> np.ndarray:
+    """Standardize :data:.
+
+    If :check: is True, the result is checked for invalid values.
+    """
+    data = (data - np.mean(data, axis=0)) / np.std(data, axis=0)
+
+    if check:
+        assert is_valid(data)
+
+    return data
 
 
 def remove_avg(traces: np.ndarray) -> np.ndarray:
     """It takes traces as a np array and returns the subtracted average traces"""
-    avg = np.average(traces, axis=0)
-    return traces - avg
+    return traces - np.mean(traces, axis=0)
 
 
 def gen_labels(leakage_model, metadata: np.ndarray, key_byte: int) -> np.ndarray:
