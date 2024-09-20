@@ -11,7 +11,6 @@ from scadl.tools import normalization, remove_avg, sbox
 
 
 def leakage_model(data: np.ndarray, guess: int) -> int:
-    """It returns the leakage model"""
     return sbox[guess ^ data["plaintext"][2]]
 
 
@@ -21,22 +20,22 @@ if __name__ == "__main__":
         exit()
     dataset_dir = Path(sys.argv[1])
 
-    """loading traces and metadata for training"""
+    # Load traces and metadata for attack
     file = h5py.File(dataset_dir / "ASCAD.h5", "r")
     leakages = file["Attack_traces"]["traces"][:]
     metadata = file["Attack_traces"]["metadata"][:]
 
-    """correct key value to test it's rank"""
+    # correct key value to estimate the rank against
     correct_key = metadata["key"][0][2]
 
-    """Selecting poi where SNR gives the max value and it should have 
-    the same index like what is used in the profiling phase """
+    # Select POIs where SNR gives the max value. It should have the same index
+    # like what is used in the profiling phase.
     poi = leakages
+
+    # Same preprocessing as for the training
     poi = normalization(remove_avg(poi), feature_range=(-1, 1))
 
-    # Normalization is used for improving the learning
-
-    """Loading the DL model"""
+    # Load the model
     model = load_model("model.keras")
     SIZE = 1000
     TRIALS = 20
@@ -46,7 +45,7 @@ if __name__ == "__main__":
         index = np.random.randint(len(leakages) - SIZE)
         sample_poi = poi[index : index + SIZE]
         sample_metadata = metadata[index : index + SIZE]
-        """Testing the correct key rank"""
+        # Test the correct key rank
         rank, number_traces = test_engine.match(
             x_test=sample_poi,
             metadata=sample_metadata,
@@ -60,7 +59,7 @@ if __name__ == "__main__":
             avg_rank += rank
     avg_rank = avg_rank / TRIALS
 
-    """Plotting the result"""
+    # Plot the result
     FONT_SIZE = 2
     LINE_WIDTH = 2
     plt.plot(number_traces, avg_rank, "black", linewidth=LINE_WIDTH)

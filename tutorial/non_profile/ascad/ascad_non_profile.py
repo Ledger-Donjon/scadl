@@ -16,14 +16,12 @@ TARGET_BYTE = 2
 
 
 def leakage_model(data: np.ndarray, guess: int) -> int:
-    """It returns the leakage function"""
     # return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]) >> 7) #msb
     return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
     # return hw(sbox[data['plaintext'][TARGET_BYTE] ^ guess]) #hw
 
 
 def mlp_short(len_samples: int) -> keras.Model:
-    """It returns an MLP model"""
     model = Sequential()
     model.add(Input(shape=(len_samples,)))
     model.add(Dense(20, activation="relu"))
@@ -39,7 +37,7 @@ if __name__ == "__main__":
         exit()
     dataset_dir = Path(sys.argv[1])
 
-    """loading traces and metadata for training"""
+    # Load traces and metadata for training
     SIZE_TEST = 20000
     file = h5py.File(dataset_dir / "ASCAD.h5", "r")
     leakages = np.array(file["Profiling_traces"]["traces"][:], dtype=np.int8)[
@@ -48,9 +46,10 @@ if __name__ == "__main__":
     metadata = file["Profiling_traces"]["metadata"][:][0:SIZE_TEST]
     correct_key = metadata["key"][0][TARGET_BYTE]
 
-    """Subtracting average from traces + normalization"""
+    # Subtract average from traces + normalization
     x_train = normalization(remove_avg(leakages), feature_range=(-1, 1))
-    """Non-profiling DL"""
+
+    # Non-profiling DL
     EPOCHS = 15
     guess_range = range(0, 256)
     acc = np.zeros((len(guess_range), EPOCHS))

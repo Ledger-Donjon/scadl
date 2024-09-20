@@ -12,7 +12,6 @@ from scadl.tools import normalization, sbox
 
 
 def model_mlp(sample_len: int, range_outer_layer: int) -> keras.Model:
-    """It returns an MLP model"""
     model = Sequential()
     model.add(Input(shape=(sample_len,)))
     model.add(Dense(500, activation="relu"))
@@ -29,7 +28,6 @@ def model_mlp(sample_len: int, range_outer_layer: int) -> keras.Model:
 
 
 def model_cnn(sample_len: int, range_outer_layer: int) -> keras.Model:
-    """It takes sample_len and guess_range and passes a CNN model"""
     model = Sequential()
     model.add(Input(shape=(sample_len, 1)))
     model.add(Conv1D(filters=20, kernel_size=5, activation="tanh"))
@@ -65,21 +63,28 @@ if __name__ == "__main__":
     dataset_dir = Path(sys.argv[1])
     leakages = np.load(dataset_dir / "train/traces.npy")
     metadata = np.load(dataset_dir / "train/combined_train.npy")
-    """Selecting poi where SNR gives the max value"""
-    x_train = normalization(
-        leakages[:, 1315:1325], feature_range=(0, 1)
-    )  # Normalization is used for improving the learning
+
+    # Select POIs where SNR gives the max value
+    # Normalization improves the learning
+    x_train = normalization(leakages[:, 1315:1325], feature_range=(0, 1))
 
     len_samples = x_train.shape[1]
-    """Loading the DL model mlp"""
+
+    # Build the model
     len_samples = x_train.shape[1]
     GUESS_RANGE = 256
     if sys.argv[2] == "mlp":
-        model_dl = model_mlp(sample_len=len_samples, range_outer_layer=GUESS_RANGE)
+        model = model_mlp(sample_len=len_samples, range_outer_layer=GUESS_RANGE)
+    elif sys.argv[2] == "cnn":
+        model = model_cnn(len_samples, GUESS_RANGE)
     else:
-        model_dl = model_cnn(len_samples, GUESS_RANGE)
-    """Profiling"""
-    profile_engine = Profile(model_dl, leakage_model=leakage_model)
+        print("Invalid model type")
+        exit()
+
+    model.summary()
+
+    # Train the model
+    profile_engine = Profile(model, leakage_model=leakage_model)
     profile_engine.data_augmentation(data_aug)
     profile_engine.train(
         x_train=x_train,

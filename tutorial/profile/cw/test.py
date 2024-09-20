@@ -10,8 +10,7 @@ from scadl.tools import normalization, sbox
 
 
 def leakage_model(data: np.ndarray, guess: int) -> int:
-    """leakage function takes the data and guess. It returns the leakage model"""
-    return sbox[guess ^ data["plaintext"][0]]
+    return sbox[guess ^ int(data["plaintext"][0])]
 
 
 if __name__ == "__main__":
@@ -25,15 +24,17 @@ if __name__ == "__main__":
     metadata = np.load(dataset_dir / "test/combined_test.npy")[0:SIZE_TEST]
 
     correct_key = metadata["key"][0][0]
-    poi = normalization(
-        leakages[:, 1315:1325]
-    )  # Normalization is used for improving the learning
+    # Select the same POIs and apply the same preprocessing as in the training
+    poi = normalization(leakages[:, 1315:1325])
+
+    # Load the model and evaluate the rank
     model = load_model("model.keras")
     test_engine = Match(model=model, leakage_model=leakage_model)
     rank, number_traces = test_engine.match(
         x_test=poi, metadata=metadata, guess_range=256, correct_key=correct_key, step=1
     )
-    """Plotting the result"""
+
+    # Plot the result
     FONT_SIZE = 2
     LINE_WIDTH = 2
     plt.plot(number_traces, rank, "black", linewidth=LINE_WIDTH)

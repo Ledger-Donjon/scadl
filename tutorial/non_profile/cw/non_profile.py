@@ -16,7 +16,6 @@ TARGET_BYTE = 0
 
 
 def mlp_non_profiling(len_samples: int) -> keras.Model:
-    """It retrurns an MLP model"""
     model = Sequential()
     model.add(Input(shape=(len_samples,)))
     model.add(Dense(20, activation="relu"))
@@ -27,8 +26,7 @@ def mlp_non_profiling(len_samples: int) -> keras.Model:
 
 
 def leakage_model(data: np.ndarray, guess: int) -> int:
-    """It returns the leakage function"""
-    return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
+    return 1 & ((sbox[int(data["plaintext"][TARGET_BYTE]) ^ guess]))  # lsb
 
 
 if __name__ == "__main__":
@@ -41,14 +39,11 @@ if __name__ == "__main__":
     metadata = np.load(dataset_dir / "test/combined_test.npy")[0:3000]
     correct_key = metadata["key"][0][0]
 
-    """Subtracting average from traces + normalization"""
+    # Subtract average from traces + normalization
     avg = remove_avg(leakages[:, 1315:1325])
     x_train = normalization(avg, feature_range=(0, 1))
 
-    """Selecting the model"""
-    model_dl = mlp_non_profiling(x_train.shape[1])
-
-    """Non-profiling DL"""
+    # Non-profiling DL
     EPOCHS = 50
     key_range = range(0, 256)
     acc = np.zeros((len(key_range), EPOCHS))

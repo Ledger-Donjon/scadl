@@ -12,8 +12,8 @@ from scadl.tools import gen_labels, sbox
 
 
 def mlp_multi_label(nb_neurons: int = 50, nb_layers: int = 4) -> keras.Model:
-    """It takes nb_neurons as the number of neurons per layer and number of layres.
-    It returns an MLP model"""
+    """It takes :nb_neurons: as the number of neurons per layer and :nb_layers:
+    as the number of layers."""
     model = Sequential()
     model.add(Dense(nb_neurons, activation="relu"))
     for _ in range(nb_layers - 2):
@@ -27,8 +27,6 @@ def mlp_multi_label(nb_neurons: int = 50, nb_layers: int = 4) -> keras.Model:
 
 
 def cnn_multi_label(len_samples: int, guess_range: int) -> keras.Model:
-    """It takes len of samples and guess range.
-    It returns a CNN model"""
     model = Sequential()
     model.add(Conv1D(filters=20, kernel_size=5, input_shape=(len_samples, 1)))
     model.add(MaxPooling1D(pool_size=5))
@@ -40,7 +38,6 @@ def cnn_multi_label(len_samples: int, guess_range: int) -> keras.Model:
 
 
 def leakage_model(data: np.ndarray, key_byte: np.ndarray) -> int:
-    """It takes data and key_byte and returns a leakage function"""
     return sbox[data["plaintext"][key_byte] ^ data["key"][key_byte]]
 
 
@@ -53,29 +50,38 @@ if __name__ == "__main__":
     leakages = np.load(dataset_dir / "train/traces.npy")
     metadata = np.load(dataset_dir / "train/combined_train.npy")
     size_profiling = len(metadata)
-    """poi for sbox[p0^k0] and sbox[p1^k1]"""
+
+    # poi for sbox[p0^k0] and sbox[p1^k1]
     poi = np.concatenate((leakages[:, 1315:1325], leakages[:, 1490:1505]), axis=1)
-    """"generate labels"""
+
+    # Generate labels
     y_0 = gen_labels(
         leakage_model=leakage_model, metadata=metadata, key_byte=0
     ).reshape((size_profiling, 1))
     y_1 = gen_labels(
         leakage_model=leakage_model, metadata=metadata, key_byte=1
     ).reshape((size_profiling, 1))
-    """shifting second label by 256"""
+
+    # Shift second label by 256
     combined_labels = np.concatenate(
         (y_0, y_1 + 256), axis=1
     )  # second labels are shifted by 256
     label = MultiLabelBinarizer()
     labels_fit = label.fit_transform(combined_labels)
-    """load model"""
+
+    # Build model
     GUESS_RANGE = 512
     if sys.argv[2] == "mlp":
-        model_dl = mlp_multi_label()
+        model = mlp_multi_label()
+    elif sys.argv[2] == "cnn":
+        model = cnn_multi_label(poi.shape[1], GUESS_RANGE)
     else:
-        model_dl = cnn_multi_label(poi.shape[1], GUESS_RANGE)
+        print("Invalid model type")
+        exit()
 
-    """call multi-label profiling engine"""
-    profile = MultiLabelProfile(model_dl)
+    model.summary()
+
+    # Call multi-label profiling engine
+    profile = MultiLabelProfile(model)
     profile.train(x_train=poi, y_train=labels_fit, epochs=100)
     profile.save_model("model.keras")
