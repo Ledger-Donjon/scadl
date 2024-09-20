@@ -2,8 +2,7 @@ import sys
 
 import keras
 import numpy as np
-import tensorflow as tf
-from keras.layers import Conv1D, Dense, Flatten, MaxPooling1D
+from keras.layers import Conv1D, Dense, Flatten, Input, MaxPooling1D
 from keras.models import Sequential
 
 from scadl.augmentation import Mixup
@@ -14,15 +13,16 @@ from scadl.tools import normalization, sbox
 def model_mlp(sample_len: int, range_outer_layer: int) -> keras.Model:
     """It returns an MLP model"""
     model = Sequential()
-    model.add(Dense(500, input_dim=sample_len, activation=tf.nn.relu))
-    model.add(Dense(500, activation=tf.nn.relu))
-    model.add(Dense(500, activation=tf.nn.relu))
-    model.add(Dense(500, activation=tf.nn.relu))
-    model.add(Dense(range_outer_layer, activation=tf.nn.softmax))
+    model.add(Input(shape=(sample_len,)))
+    model.add(Dense(500, activation="relu"))
+    model.add(Dense(500, activation="relu"))
+    model.add(Dense(500, activation="relu"))
+    model.add(Dense(500, activation="relu"))
+    model.add(Dense(range_outer_layer, activation="softmax"))
     model.compile(
         optimizer="adam",
         loss="categorical_crossentropy",
-        metrics=["accuracy"],  # sparse_categorical_crossentropy
+        metrics=["accuracy"],
     )
     return model
 
@@ -30,11 +30,8 @@ def model_mlp(sample_len: int, range_outer_layer: int) -> keras.Model:
 def model_cnn(sample_len: int, range_outer_layer: int) -> keras.Model:
     """It takes sample_len and guess_range and passes a CNN model"""
     model = Sequential()
-    model.add(
-        Conv1D(
-            filters=20, kernel_size=5, input_shape=(sample_len, 1), activation="tanh"
-        )
-    )
+    model.add(Input(shape=(sample_len, 1)))
+    model.add(Conv1D(filters=20, kernel_size=5, activation="tanh"))
     model.add(MaxPooling1D(pool_size=6))
     model.add(Flatten())
     model.add(Dense(200, activation="relu"))

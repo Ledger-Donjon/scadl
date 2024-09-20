@@ -4,7 +4,7 @@ import h5py
 import keras
 import matplotlib.pyplot as plt
 import numpy as np
-from keras.layers import Dense
+from keras.layers import Dense, Input
 from keras.models import Sequential
 from tqdm import tqdm
 
@@ -24,15 +24,11 @@ def leakage_model(data: np.ndarray, guess: int) -> int:
 def mlp_short(len_samples: int) -> keras.Model:
     """It returns an MLP model"""
     model = Sequential()
-    model.add(Dense(20, input_dim=len_samples, activation="relu"))
+    model.add(Input(shape=(len_samples,)))
+    model.add(Dense(20, activation="relu"))
     model.add(Dense(10, activation="relu"))
     model.add(Dense(2, activation="softmax"))
-    optimizer = "adam"
-    model.compile(
-        loss="mean_squared_error",
-        optimizer=optimizer,
-        metrics=["accuracy"],
-    )
+    model.compile(loss="mean_squared_error", optimizer="adam", metrics=["accuracy"])
     return model
 
 

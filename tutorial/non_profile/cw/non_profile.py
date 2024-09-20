@@ -4,7 +4,7 @@ import keras
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from keras.layers import Dense
+from keras.layers import Dense, Input
 from keras.models import Sequential
 from tqdm import tqdm
 
@@ -17,9 +17,10 @@ TARGET_BYTE = 0
 def mlp_non_profiling(len_samples: int) -> keras.Model:
     """It retrurns an MLP model"""
     model = Sequential()
-    model.add(Dense(20, input_dim=len_samples, activation=tf.nn.relu))
-    model.add(Dense(10, activation=tf.nn.relu))
-    model.add(Dense(2, activation=tf.nn.softmax))
+    model.add(Input(shape=(len_samples,)))
+    model.add(Dense(20, activation="relu"))
+    model.add(Dense(10, activation="relu"))
+    model.add(Dense(2, activation="softmax"))
     model.compile(optimizer="adam", loss="mean_squared_error", metrics=["accuracy"])
     return model
 

@@ -3,7 +3,7 @@ import sys
 import h5py
 import keras
 import numpy as np
-from keras.layers import Conv1D, Dense, Dropout, Flatten, MaxPooling1D
+from keras.layers import Conv1D, Dense, Flatten, Input, MaxPooling1D
 from keras.models import Sequential
 
 from scadl.augmentation import Mixup, RandomCrop
@@ -33,7 +33,8 @@ def aug_crop(x: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 def mlp_short(len_samples: int) -> keras.Model:
     """It returns an MLP model"""
     model = Sequential()
-    model.add(Dense(20, input_dim=len_samples, activation="relu"))
+    model.add(Input(shape=(len_samples,)))
+    model.add(Dense(20, activation="relu"))
     # BatchNormalization()
     model.add(Dense(50, activation="relu"))
     model.add(Dense(256, activation="softmax"))
@@ -48,12 +49,12 @@ def mlp_short(len_samples: int) -> keras.Model:
 def model_cnn(sample_len: int, range_outer_layer: int) -> keras.Model:
     """It takes sample_len and guess_range and passes a CNN model"""
     model = Sequential()
+    model.add(Input(shape=(sample_len, 1)))
     model.add(
         Conv1D(
             filters=8,
             kernel_size=32,
             padding="same",
-            input_shape=(sample_len, 1),
             activation="relu",
         )
     )
@@ -63,7 +64,6 @@ def model_cnn(sample_len: int, range_outer_layer: int) -> keras.Model:
             filters=8,
             kernel_size=16,
             padding="same",
-            input_shape=(sample_len, 1),
             activation="tanh",
         )
     )
@@ -73,13 +73,11 @@ def model_cnn(sample_len: int, range_outer_layer: int) -> keras.Model:
             filters=8,
             kernel_size=8,
             padding="same",
-            input_shape=(sample_len, 1),
             activation="tanh",
         )
     )
     model.add(MaxPooling1D(pool_size=2))
     model.add(Flatten())
-    Dropout(0.1)
     model.add(Dense(50, activation="relu"))
     model.add(Dense(range_outer_layer, activation="softmax"))
     model.compile(
