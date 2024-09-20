@@ -9,7 +9,7 @@ from scadl.tools import sbox
 TARGET_BYTE = 1  # or 0
 
 
-def leakage_model(data, guess):
+def leakage_model(data: np.ndarray, guess: int) -> int:
     """Leakage function"""
     return sbox[guess ^ data["plaintext"][TARGET_BYTE]]
 

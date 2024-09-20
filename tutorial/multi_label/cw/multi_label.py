@@ -38,7 +38,7 @@ def cnn_multi_label(len_samples: int, guess_range: int) -> keras.Model:
     return model
 
 
-def leakage_model(data, key_byte):
+def leakage_model(data: np.ndarray, key_byte: np.ndarray) -> int:
     """It takes data and key_byte and returns a leakage function"""
     return sbox[data["plaintext"][key_byte] ^ data["key"][key_byte]]
 

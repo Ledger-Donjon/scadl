@@ -24,7 +24,7 @@ def mlp_non_profiling(len_samples: int) -> keras.Model:
     return model
 
 
-def leakage_model(data, guess):
+def leakage_model(data: np.ndarray, guess: int) -> int:
     """It returns the leakage function"""
     return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
 

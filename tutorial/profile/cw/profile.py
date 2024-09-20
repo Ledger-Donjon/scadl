@@ -45,7 +45,7 @@ def model_cnn(sample_len: int, range_outer_layer: int) -> keras.Model:
     return model
 
 
-def leakage_model(data):
+def leakage_model(data: np.ndarray) -> int:
     """leakage model for sbox[0]"""
     return sbox[data["plaintext"][0] ^ data["key"][0]]
 

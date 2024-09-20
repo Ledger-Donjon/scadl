@@ -22,7 +22,6 @@ from typing import Optional
 
 import keras
 import numpy as np
-import tensorflow as tf
 from keras.models import Model
 
 

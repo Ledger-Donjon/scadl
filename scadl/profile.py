@@ -30,14 +30,19 @@ class Profile:
     It takes two argiments: the DL model and the leakage model
     """
 
-    def __init__(self, model: Model, leakage_model: Callable):
+    def __init__(self, model: Model, leakage_model: Callable[[np.ndarray], int]):
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
-        self.data_aug: Optional[Callable] = None
+        self.data_aug: Optional[
+            Callable[[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]]
+        ] = None
         self.history = None
 
-    def data_augmentation(self, func_aug: Callable):
+    def data_augmentation(
+        self,
+        func_aug: Callable[[np.ndarray, np.ndarray], tuple[np.ndarray, np.ndarray]],
+    ):
         """to pass the self"""
         self.data_aug = func_aug
 
@@ -58,7 +63,7 @@ class Profile:
 
         assert self.data_aug is not None
 
-        y_train = np.array([self.leakage_model(i) for i in metadata])
+        y_train = np.array([self.leakage_model(m) for m in metadata])
         y_train = keras.utils.to_categorical(y_train, guess_range)
         if data_augmentation:
             x, y = self.data_aug(x_train, y_train)
@@ -85,7 +90,7 @@ class Profile:
 class Match:
     """This class is used for testing the attack after the profiling phase"""
 
-    def __init__(self, model: Model, leakage_model: Callable):
+    def __init__(self, model: Model, leakage_model: Callable[[np.ndarray, int], int]):
         """model: after training the profile model this is fed to this class to test the attack
         leakage_model: The same leakage model used for profiling"""
         super().__init__()

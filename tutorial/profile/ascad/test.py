@@ -7,7 +7,7 @@ from scadl.profile import Match
 from scadl.tools import sbox, normalization, remove_avg
 
 
-def leakage_model(data, guess):
+def leakage_model(data: np.ndarray, guess: int) -> int:
     """It returns the leakage model"""
     return sbox[guess ^ data["plaintext"][2]]
 

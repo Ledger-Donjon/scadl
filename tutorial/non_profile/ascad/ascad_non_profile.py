@@ -14,7 +14,7 @@ from scadl.tools import normalization, remove_avg, sbox
 TARGET_BYTE = 2
 
 
-def leakage_model(data: np.ndarray, guess):
+def leakage_model(data: np.ndarray, guess: int) -> int:
     """It returns the leakage function"""
     # return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]) >> 7) #msb
     return 1 & ((sbox[data["plaintext"][TARGET_BYTE] ^ guess]))  # lsb
