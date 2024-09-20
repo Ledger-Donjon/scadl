@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 import keras
 import matplotlib.pyplot as plt
@@ -35,9 +36,9 @@ if __name__ == "__main__":
         print("Need to specify the location of training data")
         exit()
 
-    DIR = sys.argv[1]
-    leakages = np.load(DIR + "/test/traces.npy")[0:3000]
-    metadata = np.load(DIR + "/test/combined_test.npy")[0:3000]
+    dataset_dir = Path(sys.argv[1])
+    leakages = np.load(dataset_dir / "test/traces.npy")[0:3000]
+    metadata = np.load(dataset_dir / "test/combined_test.npy")[0:3000]
     correct_key = metadata["key"][0][0]
 
     """Subtracting average from traces + normalization"""

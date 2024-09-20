@@ -1,10 +1,13 @@
 import sys
-import numpy as np
-import matplotlib.pyplot as plt
+from pathlib import Path
+
 import h5py
+import matplotlib.pyplot as plt
+import numpy as np
 from keras.models import load_model
+
 from scadl.profile import Match
-from scadl.tools import sbox, normalization, remove_avg
+from scadl.tools import normalization, remove_avg, sbox
 
 
 def leakage_model(data: np.ndarray, guess: int) -> int:
@@ -16,10 +19,10 @@ if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Need to specify the location of training data")
         exit()
-    DIR = sys.argv[1]
+    dataset_dir = Path(sys.argv[1])
 
     """loading traces and metadata for training"""
-    file = h5py.File(f"{DIR}/ASCAD.h5", "r")
+    file = h5py.File(dataset_dir / "ASCAD.h5", "r")
     leakages = file["Attack_traces"]["traces"][:]
     metadata = file["Attack_traces"]["metadata"][:]
 

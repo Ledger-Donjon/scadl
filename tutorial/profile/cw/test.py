@@ -1,9 +1,12 @@
 import sys
-import numpy as np
+from pathlib import Path
+
 import matplotlib.pyplot as plt
+import numpy as np
 from keras.models import load_model
+
 from scadl.profile import Match
-from scadl.tools import sbox, normalization
+from scadl.tools import normalization, sbox
 
 
 def leakage_model(data: np.ndarray, guess: int) -> int:
@@ -14,10 +17,13 @@ def leakage_model(data: np.ndarray, guess: int) -> int:
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Need to specify the location of testing data")
-    DIR = sys.argv[1]
+        exit()
+
+    dataset_dir = Path(sys.argv[1])
     SIZE_TEST = 50
-    leakages = np.load(DIR + "/test/traces.npy")[0:SIZE_TEST]
-    metadata = np.load(DIR + "/test/combined_test.npy")[0:SIZE_TEST]
+    leakages = np.load(dataset_dir / "test/traces.npy")[0:SIZE_TEST]
+    metadata = np.load(dataset_dir / "test/combined_test.npy")[0:SIZE_TEST]
+
     correct_key = metadata["key"][0][0]
     poi = normalization(
         leakages[:, 1315:1325]

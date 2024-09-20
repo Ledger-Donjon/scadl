@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 import keras
 import numpy as np
@@ -60,9 +61,10 @@ if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Need to specify the location of training data and model")
         exit()
-    DIR = sys.argv[1]
-    leakages = np.load(DIR + "/train/traces.npy")
-    metadata = np.load(DIR + "/train/combined_train.npy")
+
+    dataset_dir = Path(sys.argv[1])
+    leakages = np.load(dataset_dir / "train/traces.npy")
+    metadata = np.load(dataset_dir / "train/combined_train.npy")
     """Selecting poi where SNR gives the max value"""
     x_train = normalization(
         leakages[:, 1315:1325], feature_range=(0, 1)

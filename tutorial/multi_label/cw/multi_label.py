@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 import keras
 import numpy as np
@@ -48,9 +49,9 @@ if __name__ == "__main__":
         print("Need to specify the location of training data")
         exit()
 
-    DIR = sys.argv[1]
-    leakages = np.load(DIR + "/train/traces.npy")
-    metadata = np.load(DIR + "/train/combined_train.npy")
+    dataset_dir = Path(sys.argv[1])
+    leakages = np.load(dataset_dir / "train/traces.npy")
+    metadata = np.load(dataset_dir / "train/combined_train.npy")
     size_profiling = len(metadata)
     """poi for sbox[p0^k0] and sbox[p1^k1]"""
     poi = np.concatenate((leakages[:, 1315:1325], leakages[:, 1490:1505]), axis=1)

@@ -1,10 +1,12 @@
 import sys
-import numpy as np
+from pathlib import Path
+
 import matplotlib.pyplot as plt
+import numpy as np
 from keras.models import load_model
+
 from scadl.multi_label_profile import MatchMultiLabel
 from scadl.tools import sbox
-
 
 TARGET_BYTE = 1  # or 0
 
@@ -17,12 +19,11 @@ def leakage_model(data: np.ndarray, guess: int) -> int:
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Need to specify the location of testing data")
-    DIR = sys.argv[1]
+    dataset_dir = Path(sys.argv[1])
 
     SIZE = 50
-    leakages = np.load(DIR + "/test/traces.npy")[0:SIZE]
-    metadata = np.load(DIR + "/test/combined_test.npy")[0:SIZE]
-    """selecting which key byte needs to be attacked"""
+    leakages = np.load(dataset_dir / "test/traces.npy")[0:SIZE]
+    metadata = np.load(dataset_dir / "test/combined_test.npy")[0:SIZE]
 
     prob_range = (TARGET_BYTE * 256, 256 + TARGET_BYTE * 256)
     correct_key = metadata["key"][0][TARGET_BYTE]

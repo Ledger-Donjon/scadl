@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 import h5py
 import keras
@@ -90,10 +91,10 @@ if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Need to specify the location of training data and model")
         exit()
-    DIR = sys.argv[1]
+    dataset_dir = Path(sys.argv[1])
 
     """loading traces and metadata for training"""
-    file = h5py.File(f"{DIR}/ASCAD.h5", "r")
+    file = h5py.File(dataset_dir / "ASCAD.h5", "r")
     leakages = file["Profiling_traces"]["traces"][:]
     metadata = file["Profiling_traces"]["metadata"][:]
 
