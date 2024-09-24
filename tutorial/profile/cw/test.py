@@ -35,11 +35,7 @@ if __name__ == "__main__":
     )
 
     # Plot the result
-    FONT_SIZE = 2
-    LINE_WIDTH = 2
-    plt.plot(number_traces, rank, "black", linewidth=LINE_WIDTH)
-    plt.xlabel("Number of traces", fontsize=FONT_SIZE)
-    plt.ylabel("Average rank of K[0] ", fontsize=FONT_SIZE)
-    plt.xticks(fontsize=25)
-    plt.yticks(fontsize=25)
+    plt.plot(number_traces, rank, "black")
+    plt.xlabel("Number of traces")
+    plt.ylabel("Average rank of K[0]")
     plt.show()
