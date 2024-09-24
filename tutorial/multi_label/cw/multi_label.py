@@ -11,24 +11,27 @@ from scadl.multi_label_profile import MultiLabelProfile
 from scadl.tools import gen_labels, sbox
 
 
-def mlp_multi_label(nb_neurons: int = 50, nb_layers: int = 4) -> keras.Model:
+def mlp_multi_label(
+    sample_len: int, guess_range: int, nb_neurons: int = 50, nb_layers: int = 4
+) -> keras.Model:
     """It takes :nb_neurons: as the number of neurons per layer and :nb_layers:
     as the number of layers."""
     model = Sequential()
+    model.add(Input(shape=(sample_len,)))
     model.add(Dense(nb_neurons, activation="relu"))
     for _ in range(nb_layers - 2):
         model.add(Dense(nb_neurons, activation="relu"))
         # Dropout(0.1)
         # BatchNormalization()
-    model.add(Dense(512, activation="sigmoid"))
-    optimizer = "adam"
-    model.compile(loss="binary_crossentropy", optimizer=optimizer, metrics=["accuracy"])
+    model.add(Dense(guess_range, activation="sigmoid"))
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
     return model
 
 
-def cnn_multi_label(len_samples: int, guess_range: int) -> keras.Model:
+def cnn_multi_label(sample_len: int, guess_range: int) -> keras.Model:
     model = Sequential()
-    model.add(Conv1D(filters=20, kernel_size=5, input_shape=(len_samples, 1)))
+    model.add(Input(shape=(sample_len, 1)))
+    model.add(Conv1D(filters=20, kernel_size=5))
     model.add(MaxPooling1D(pool_size=5))
     model.add(Flatten())
     model.add(Dense(200, activation="relu"))
@@ -63,16 +66,14 @@ if __name__ == "__main__":
     ).reshape((size_profiling, 1))
 
     # Shift second label by 256
-    combined_labels = np.concatenate(
-        (y_0, y_1 + 256), axis=1
-    )  # second labels are shifted by 256
+    combined_labels = np.concatenate((y_0, y_1 + 256), axis=1)
     label = MultiLabelBinarizer()
     labels_fit = label.fit_transform(combined_labels)
 
     # Build model
     GUESS_RANGE = 512
     if sys.argv[2] == "mlp":
-        model = mlp_multi_label()
+        model = mlp_multi_label(poi.shape[1], GUESS_RANGE)
     elif sys.argv[2] == "cnn":
         model = cnn_multi_label(poi.shape[1], GUESS_RANGE)
     else:

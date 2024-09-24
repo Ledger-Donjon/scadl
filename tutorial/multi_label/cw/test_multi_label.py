@@ -12,12 +12,14 @@ TARGET_BYTE = 1  # or 0
 
 
 def leakage_model(data: np.ndarray, guess: int) -> int:
-    return sbox[guess ^ data["plaintext"][TARGET_BYTE]]
+    return sbox[guess ^ int(data["plaintext"][TARGET_BYTE])]
 
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Need to specify the location of testing data")
+        exit()
+
     dataset_dir = Path(sys.argv[1])
 
     SIZE = 50
