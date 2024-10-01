@@ -6,7 +6,7 @@ if __name__ == "__main__":
     import numpy as np
     from keras.models import load_model
 
-    from scadl.multi_task import compute_rank
+    from scadl.multi_task import compute_guessing_entropy
     from scadl.tools import sbox, standardize
 
     NB_BYTES = 16
@@ -31,14 +31,14 @@ if __name__ == "__main__":
     predictions = model.predict(traces)
 
     for i in range(NB_BYTES):
-        rank, number_traces = compute_rank(
+        guessing_entropy, number_traces = compute_guessing_entropy(
             predictions[i],
             lambda data, guess: sbox[guess ^ int(data["plaintext"][i])],
-            traces,
             metadata,
             256,
             correct_key[i],
             1,
+            3,
         )
-        plt.plot(number_traces, rank)
+        plt.plot(number_traces, guessing_entropy)
     plt.show()

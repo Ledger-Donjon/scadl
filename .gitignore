@@ -5,3 +5,4 @@ scadl.egg-info/
 *.pyc
 *__pycache__*
 *.keras
+.envrc
