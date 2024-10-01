@@ -95,11 +95,11 @@ class Match:
 
     def __init__(self, model: Model, leakage_model: Callable[[np.ndarray, int], int]):
         """model: after training the profile model this is fed to this class to test the attack
-        leakage_model: The same leakage model used for profiling"""
+        leakage_model: The same leakage model used for profiling
+        """
         super().__init__()
         self.model = model
         self.leakage_model = leakage_model
-        self.predictions: Optional[np.ndarray] = None
 
     def match(
         self,
@@ -108,29 +108,30 @@ class Match:
         guess_range: int,
         correct_key: int,
         step: int,
-    ) -> tuple[np.ndarray, list[int]]:
-        """They key rank is implemnted based on the sum of np.log() of the prob
-        success rate is calculated as shown in https://eprint.iacr.org/2006/139.pdf"""
-        rank = []
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """They key rank is implemented based on the sum of np.log() of the prob
+        success rate is calculated as shown in https://eprint.iacr.org/2006/139.pdf
+        """
+        predictions = self.model.predict(x_test)
+
+        chunk_starts = range(0, len(x_test), step)
+        rank = np.zeros(len(chunk_starts), dtype=np.uint32)
+        x_rank = np.zeros(len(chunk_starts), dtype=np.uint32)
         number_traces = 0
-        x_rank = []
-        self.predictions = self.model.predict(x_test)
         rank_array = np.zeros(guess_range)
-        for i in range(0, len(x_test), step):
-            chunk = self.predictions[i : i + step]
-            chunk_metdata = metadata[i : i + step]
-            len_predictions = len(chunk)
-            for row in range(len_predictions):
+        for i, chunk_start in enumerate(chunk_starts):
+            pred_chunk = predictions[chunk_start : chunk_start + step]
+            metadata_chunk = metadata[chunk_start : chunk_start + step]
+            for row in range(len(pred_chunk)):
                 for guess in range(guess_range):
-                    index = self.leakage_model(chunk_metdata[row], guess)
-                    if chunk[row, index] != 0:
-                        rank_array[guess] += np.log2(
-                            chunk[row, index]
-                        )  # sum of np.log (predictions)
-            tmp_rank = np.where(sorted(rank_array)[::-1] == rank_array[correct_key])[0][
+                    index = self.leakage_model(metadata_chunk[row], guess)
+                    if pred_chunk[row, index] != 0:
+                        rank_array[guess] += np.log2(pred_chunk[row, index])
+            rank[i] = np.where(sorted(rank_array)[::-1] == rank_array[correct_key])[0][
                 0
             ]
-            rank.append(tmp_rank)
+
             number_traces += step
-            x_rank.append(number_traces)
-        return np.array(rank), x_rank
+            x_rank[i] = number_traces
+
+        return rank, x_rank
