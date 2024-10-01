@@ -45,6 +45,9 @@ class NonProfile:
         hist_acc: str,
         epochs: int = 300,
         batch_size: int = 100,
+        validation_split: float = 0.1,
+        verbose: int = 1,
+        **kwargs,
     ) -> np.ndarray:
         """
         x_train, metadata: leakages and additional data used for training.
@@ -52,14 +55,17 @@ class NonProfile:
         or 'val_accuracy'"""
         y_train = np.array([self.leakage_model(i, guess) for i in metadata])
         y = keras.utils.to_categorical(y_train, num_classes)
-        acc = model.fit(
+        self.history = model.fit(
             x=x_train,
             y=y,
             epochs=epochs,
             batch_size=batch_size,
-            validation_split=0.1,
-            verbose=0,
-        ).history[hist_acc]
+            validation_split=validation_split,
+            verbose=verbose,
+            **kwargs,
+        )
+
+        acc = self.history.history[hist_acc]
 
         self.acc = acc
 

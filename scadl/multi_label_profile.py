@@ -18,7 +18,6 @@
 
 
 from collections.abc import Callable
-from typing import Optional
 
 import numpy as np
 from keras.models import Model
@@ -30,6 +29,7 @@ class MultiLabelProfile:
     def __init__(self, model: Model):
         super().__init__()
         self.model = model
+        self.history = None
 
     def train(
         self,
@@ -37,13 +37,20 @@ class MultiLabelProfile:
         y_train: np.ndarray,
         epochs: int = 300,
         batch_size: int = 100,
+        validation_split: float = 0.1,
+        **kwargs,
     ):
         """This function accepts
         x_train: np.array,
         y_train: np.array,
         """
-        self.model.fit(
-            x_train, y_train, epochs=epochs, batch_size=batch_size, validation_split=0.1
+        self.history = self.model.fit(
+            x_train,
+            y_train,
+            epochs=epochs,
+            batch_size=batch_size,
+            validation_split=validation_split,
+            **kwargs,
         )
 
     def save_model(self, name: str):

@@ -55,6 +55,8 @@ class Profile:
         batch_size: int = 100,
         validation_split: float = 0.1,
         data_augmentation: bool = False,
+        verbose: int = 1,
+        **kwargs,
     ):
         """This function is used to train the model
         x_train: poi from leakages
@@ -78,8 +80,9 @@ class Profile:
             y_training,
             epochs=epochs,
             batch_size=batch_size,
-            verbose=1,
+            verbose=verbose,
             validation_data=(x_test, y_test),
+            **kwargs,
         )
 
     def save_model(self, name: str):
