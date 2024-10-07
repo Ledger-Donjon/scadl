@@ -17,20 +17,22 @@
 # Copyright 2024 Karim ABDELLATIF, PhD, Ledger - karim.abdellatif@ledger.fr
 
 
+from collections.abc import Callable
+from typing import Optional
+
+import keras
 import numpy as np
 from keras.models import Model
-import keras
-import tensorflow as tf
 
 
 class NonProfile:
     """This class is used for Non-profiling DL attacks proposed in https://eprint.iacr.org/2018/196.pdf"""
 
-    def __init__(self, leakage_model):
+    def __init__(self, leakage_model: Callable):
         """It takes a model and a leakagae_model function"""
         # super().__init__()
         self.leakage_model = leakage_model
-        self.acc = None
+        self.acc: Optional[np.ndarray] = None
         self.history = None
 
     def train(
@@ -41,8 +43,11 @@ class NonProfile:
         guess: int,
         num_classes: int,
         hist_acc: str,
-        epochs=300,
-        batch_size=100,
+        epochs: int = 300,
+        batch_size: int = 100,
+        validation_split: float = 0.1,
+        verbose: int = 1,
+        **kwargs,
     ) -> np.ndarray:
         """
         x_train, metadata: leakages and additional data used for training.
@@ -50,12 +55,18 @@ class NonProfile:
         or 'val_accuracy'"""
         y_train = np.array([self.leakage_model(i, guess) for i in metadata])
         y = keras.utils.to_categorical(y_train, num_classes)
-        self.acc = model.fit(
+        self.history = model.fit(
             x=x_train,
             y=y,
             epochs=epochs,
             batch_size=batch_size,
-            validation_split=0.1,
-            verbose=0,
-        ).history[hist_acc]
-        return self.acc
+            validation_split=validation_split,
+            verbose=verbose,
+            **kwargs,
+        )
+
+        acc = self.history.history[hist_acc]
+
+        self.acc = acc
+
+        return acc

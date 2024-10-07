@@ -22,8 +22,11 @@ class Mixup:
     """This class used for data augmentation
     proposed in https://eprint.iacr.org/2021/328.pdf"""
 
-    def generate(self, x_train: np, y_train: np, ratio: float, alpha=0.2):
+    def generate(
+        self, x_train: np.ndarray, y_train: np.ndarray, ratio: float, alpha: float = 0.2
+    ) -> tuple[np.ndarray, np.ndarray]:
         """It taked x_train, y_train, which are leakages and labels"""
+
         len_augmented_data = int(ratio * len(x_train))
         augmented_data = np.zeros((len_augmented_data, x_train.shape[1]))
         augmented_labels = np.zeros((len_augmented_data, y_train.shape[1]))
@@ -37,6 +40,7 @@ class Mixup:
             augmented_labels[i] = (lam * y_train[random_index]) + (
                 (1 - lam) * y_train[random_index + 1]
             )
+
         return np.concatenate((x_train, augmented_data), axis=0), np.concatenate(
             (y_train, augmented_labels), axis=0
         )
@@ -46,7 +50,9 @@ class RandomCrop:
     """A data augmentation technique shown in
     https://blog.roboflow.com/why-and-how-to-implement-random-crop-data-augmentation/"""
 
-    def generate(self, x_train: np, y_train: np, ratio: float, window):
+    def generate(
+        self, x_train: np.ndarray, y_train: np.ndarray, ratio: float, window: int
+    ) -> tuple[np.ndarray, np.ndarray]:
         """It taked x_train, y_train, ratio which are leakages, labels, and data increase ratio"""
         len_augmented_data = int(ratio * len(x_train))
         augmented_data = np.zeros((len_augmented_data, x_train.shape[1]))
