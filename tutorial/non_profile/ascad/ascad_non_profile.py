@@ -1,6 +1,5 @@
 import sys
 from pathlib import Path
-
 import h5py
 import keras
 import matplotlib.pyplot as plt
@@ -8,7 +7,6 @@ import numpy as np
 from keras.layers import Dense, Input
 from keras.models import Sequential
 from tqdm import tqdm
-
 from scadl.non_profile import NonProfile
 from scadl.tools import normalization, remove_avg, sbox
 
@@ -38,7 +36,7 @@ if __name__ == "__main__":
     dataset_dir = Path(sys.argv[1])
 
     # Load traces and metadata for training
-    SIZE_TEST = 20000
+    SIZE_TEST = 15000
     file = h5py.File(dataset_dir / "ASCAD.h5", "r")
     leakages = np.array(file["Profiling_traces"]["traces"][:], dtype=np.int8)[
         0:SIZE_TEST
@@ -50,7 +48,7 @@ if __name__ == "__main__":
     x_train = normalization(remove_avg(leakages), feature_range=(-1, 1))
 
     # Non-profiling DL
-    EPOCHS = 15
+    EPOCHS = 5
     guess_range = range(0, 256)
     acc = np.zeros((len(guess_range), EPOCHS))
     profile_engine = NonProfile(leakage_model=leakage_model)
@@ -64,6 +62,7 @@ if __name__ == "__main__":
             num_classes=2,
             epochs=EPOCHS,
             batch_size=1000,
+            verbose=0
         )
     guessed_key = np.argmax(np.max(acc, axis=1))
     print(f"guessed key = {guessed_key}")

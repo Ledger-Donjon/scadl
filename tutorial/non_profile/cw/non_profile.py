@@ -34,9 +34,10 @@ if __name__ == "__main__":
         print("Need to specify the location of training data")
         exit()
 
+    SIZE_TRACES = 500
     dataset_dir = Path(sys.argv[1])
-    leakages = np.load(dataset_dir / "test/traces.npy")[0:3000]
-    metadata = np.load(dataset_dir / "test/combined_test.npy")[0:3000]
+    leakages = np.load(dataset_dir / "test/traces.npy")[0:SIZE_TRACES]
+    metadata = np.load(dataset_dir / "test/combined_test.npy")[0:SIZE_TRACES]
     correct_key = metadata["key"][0][0]
 
     # Subtract average from traces + normalization
@@ -44,7 +45,7 @@ if __name__ == "__main__":
     x_train = normalization(avg, feature_range=(0, 1))
 
     # Non-profiling DL
-    EPOCHS = 50
+    EPOCHS = 100
     key_range = range(0, 256)
     acc = np.zeros((len(key_range), EPOCHS))
     profile_engine = NonProfile(leakage_model=leakage_model)
@@ -58,11 +59,15 @@ if __name__ == "__main__":
             num_classes=2,
             epochs=EPOCHS,
             batch_size=1000,
+            verbose=0
         )
     guessed_key = np.argmax(np.max(acc, axis=1))
-    print(f"guessed key = {guessed_key}")
+    print(f"guessed key = {hex(guessed_key)}")
     plt.plot(acc.T, "grey")
     plt.plot(acc[correct_key], "black")
     plt.xlabel("Number of epochs")
     plt.ylabel("Accuracy ")
     plt.show()
+
+
+
