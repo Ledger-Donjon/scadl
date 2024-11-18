@@ -8,7 +8,6 @@ from keras.models import load_model
 from scadl.profile import Match
 from scadl.tools import normalization, sbox
 
-
 def leakage_model(data: np.ndarray, guess: int) -> int:
     return sbox[guess ^ int(data["plaintext"][0])]
 
@@ -25,7 +24,7 @@ if __name__ == "__main__":
 
     correct_key = metadata["key"][0][0]
     # Select the same POIs and apply the same preprocessing as in the training
-    poi = normalization(leakages[:, 1315:1325])
+    poi = normalization(leakages[:, 1315:1325], feature_range=(0, 1))
 
     # Load the model and evaluate the rank
     model = load_model("model.keras")

@@ -90,11 +90,11 @@ if __name__ == "__main__":
     test_metadata = file["Attack_traces"]["metadata"][:]
     test_traces = normalization(remove_avg(test_traces), feature_range=(-1, 1))
     model_wo_sm = innvestigate.model_wo_softmax(model)
-    gradient_analyzer = innvestigate.analyzer.InputTimesGradient(model_wo_sm)
+    gradient_analyzer = innvestigate.analyzer.Gradient(model_wo_sm)
     vis_trace = np.zeros(700)
     for index, trace_sample in enumerate(test_traces):
         trace = trace_sample.reshape(1, 700)
         prob = model.predict(trace)
         vis_trace += gradient_analyzer.analyze(trace)[0]
-    plt.plot(abs(vis_trace / len(leakages)))
+    plt.plot(abs(vis_trace / len(test_traces)))
     plt.show()

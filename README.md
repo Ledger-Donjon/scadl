@@ -14,7 +14,7 @@ Scadl implements the following attacks which have been published before:
  - [Non-profiling](https://tches.iacr.org/index.php/TCHES/article/view/7387) A similar technique to differential power analysis ([DPA](https://paulkocher.com/doc/DifferentialPowerAnalysis.pdf)) but it has the several advantages over DPA to attack protected designs (masking and desynchronization).
  - [Multi-label](https://eprint.iacr.org/2020/436): A technique to attack multiple keys using only one DL model.  
  - [Multi-tasking](https://eprint.iacr.org/2023/006.pdf): Another technique for attacking multiple keys using a single model.
- - Data augmentation: A technique to increase the dataset to boost the DL efficeincy. Scadl includes [mixup](https://eprint.iacr.org/2021/328.pdf) and [random-crop](https://blog.roboflow.com/why-and-how-to-implement-random-crop-data-augmentation/).
+ - Data augmentation: A technique to increase the dataset to boost the DL efficiency. Scadl includes [mixup](https://eprint.iacr.org/2021/328.pdf) and [random-crop](https://blog.roboflow.com/why-and-how-to-implement-random-crop-data-augmentation/).
  - [Attribution methods](https://eprint.iacr.org/2019/143.pdf): A technique to perform leakage detection using DL.
 
 ## Installation

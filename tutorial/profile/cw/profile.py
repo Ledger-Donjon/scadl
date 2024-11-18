@@ -67,7 +67,6 @@ if __name__ == "__main__":
     # Select POIs where SNR gives the max value
     # Normalization improves the learning
     x_train = normalization(leakages[:, 1315:1325], feature_range=(0, 1))
-
     len_samples = x_train.shape[1]
 
     # Build the model
