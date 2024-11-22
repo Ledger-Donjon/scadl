@@ -8,6 +8,7 @@ from keras.models import load_model
 from scadl.profile import Match
 from scadl.tools import normalization, sbox
 
+
 def leakage_model(data: np.ndarray, guess: int) -> int:
     return sbox[guess ^ int(data["plaintext"][0])]
 

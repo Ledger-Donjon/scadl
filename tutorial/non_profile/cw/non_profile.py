@@ -59,7 +59,7 @@ if __name__ == "__main__":
             num_classes=2,
             epochs=EPOCHS,
             batch_size=1000,
-            verbose=0
+            verbose=0,
         )
     guessed_key = np.argmax(np.max(acc, axis=1))
     print(f"guessed key = {hex(guessed_key)}")
@@ -68,6 +68,3 @@ if __name__ == "__main__":
     plt.xlabel("Number of epochs")
     plt.ylabel("Accuracy ")
     plt.show()
-
-
-

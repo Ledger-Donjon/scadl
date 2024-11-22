@@ -11,7 +11,7 @@ from scadl.tools import normalization, remove_avg, sbox
 
 
 def leakage_model(data: np.ndarray, guess: int) -> int:
-    
+
     return sbox[guess ^ data["plaintext"][2]]
 
 
