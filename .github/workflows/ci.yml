@@ -22,3 +22,4 @@ jobs:
       uses: isort/isort-action@v1
       with:
         requirementsFiles: "requirements.txt"
+        configuration: "--profile black --check-only --diff"
