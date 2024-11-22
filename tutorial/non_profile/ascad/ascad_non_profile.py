@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+
 import h5py
 import keras
 import matplotlib.pyplot as plt
@@ -7,6 +8,7 @@ import numpy as np
 from keras.layers import Dense, Input
 from keras.models import Sequential
 from tqdm import tqdm
+
 from scadl.non_profile import NonProfile
 from scadl.tools import normalization, remove_avg, sbox
 

@@ -1,16 +1,18 @@
 import sys
-import matplotlib.pyplot as plt
 from pathlib import Path
+
 import h5py
+import innvestigate
 import keras
+import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
 from keras.layers import Dense, Input
 from keras.models import Sequential
+
 from scadl.augmentation import Mixup, RandomCrop
 from scadl.profile import Profile
 from scadl.tools import normalization, remove_avg, sbox
-import tensorflow as tf
-import innvestigate
 
 tf.compat.v1.disable_eager_execution()
 
