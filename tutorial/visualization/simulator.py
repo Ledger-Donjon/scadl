@@ -1,13 +1,14 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import keras
 from keras.layers import Dense, Input
 from keras.models import Sequential
-from scadl.augmentation import Mixup
-from scadl.profile import Profile
-from scadl.tools import normalization
 import tensorflow as tf
 import innvestigate
+from scadl.tools import normalization
+from scadl.augmentation import Mixup
+from scadl.profile import Profile
+
 tf.compat.v1.disable_eager_execution()
 
 
@@ -17,9 +18,10 @@ def aug_mixup(x: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     x, y = mix.generate(x_train=x, y_train=y, ratio=1, alpha=1)
     return x, y
 
+
 def model_mlp(sample_len: int, range_outer_layer: int) -> keras.Model:
     """param sample_len: number of samples
-       param range_outer_layer: Number of guess
+    param range_outer_layer: Number of guess
     """
     model = Sequential()
     model.add(Input(shape=(sample_len,)))
@@ -33,12 +35,15 @@ def model_mlp(sample_len: int, range_outer_layer: int) -> keras.Model:
     )
     return model
 
+
 def leakage_model(data: np.ndarray) -> int:
     """leakage model"""
     return data
 
 
-def simulator (len_traces: int, len_samples: int, value: int, randomize=False) -> np.ndarray:
+def simulator(
+    len_traces: int, len_samples: int, value: int, randomize=False
+) -> np.ndarray:
     """A leakage value simulator"""
     leakages = np.random.uniform(1, 1.1, size=(len_traces, len_samples))
     if randomize:
@@ -46,7 +51,6 @@ def simulator (len_traces: int, len_samples: int, value: int, randomize=False) -
             random_offset = np.random.randint(len_samples)
             leakages[index, random_offset] = value
     return leakages
-
 
 
 def handy_ttest(group_a: np.ndarray, group_b: np.ndarray) -> np.ndarray:
@@ -62,42 +66,51 @@ def handy_ttest(group_a: np.ndarray, group_b: np.ndarray) -> np.ndarray:
     return num / dec
 
 
-
 def main():
     """main function"""
-    LEN_TRACES = 50000
-    LEN_SAMPLES = 500
-    VALUE_UNPROTECT = 10
-    traces_unprotect = simulator(len_traces=LEN_TRACES, len_samples=LEN_SAMPLES, value=VALUE_UNPROTECT, randomize=True)
-    VALUE_PROTECT = 20
-    traces_protect = simulator(len_traces=LEN_TRACES, len_samples=LEN_SAMPLES, value=VALUE_PROTECT, randomize=True)
-    traces_protect = simulator(len_traces=LEN_TRACES, len_samples=LEN_SAMPLES, value=VALUE_PROTECT, randomize=True)
-    t_test = handy_ttest(traces_protect, traces_unprotect)
-    dif_mean = abs(np.average(traces_unprotect, axis=0) - np.average(traces_protect, axis=0))
+    len_traces = 50000
+    len_samples = 500
+    value_unprotect = 10
+    traces_unprotect = simulator(
+        len_traces=len_traces,
+        len_samples=len_samples,
+        value=value_unprotect,
+        randomize=True,
+    )
+    value_protect = 20
+    traces_protect = simulator(
+        len_traces=len_traces,
+        len_samples=len_samples,
+        value=value_protect,
+        randomize=True,
+    )
+    # t_test = handy_ttest(traces_protect, traces_unprotect)
+    dif_mean = abs(
+        np.average(traces_unprotect, axis=0) - np.average(traces_protect, axis=0)
+    )
     plt.style.use("dark_background")
-    fig, (ax0, ax1) = plt.subplots(2)
+    _, (ax0, ax1) = plt.subplots(2)
     ax0.plot(traces_unprotect[0:100].T)
     ax0.plot(traces_protect[0:100].T)
-    ax1.plot(dif_mean) # t_test
+    ax1.plot(dif_mean)  # t_test
     plt.show()
-    
-    
-    labels_0 = np.zeros(LEN_TRACES)
-    labels_1 = np.ones(LEN_TRACES)
+
+    labels_0 = np.zeros(len_traces)
+    labels_1 = np.ones(len_traces)
     leakages = np.concatenate((traces_unprotect, traces_protect), axis=0)
     metadata = np.concatenate((labels_0, labels_1), axis=0)
     x_train = normalization((leakages), feature_range=(-1, 1))
-    GUESS_RANGE = 2
-    model = model_mlp(LEN_SAMPLES, GUESS_RANGE)
-        # Train the model
+    guess_range = 2
+    model = model_mlp(len_samples, guess_range)
+    # Train the model
     profile_engine = Profile(model, leakage_model=leakage_model)
-    EPOCHS = 5
+    number_epochs = 5
     profile_engine.data_augmentation(aug_mixup)
     profile_engine.train(
         x_train=x_train,
         metadata=metadata,
-        guess_range=GUESS_RANGE,
-        epochs=EPOCHS,
+        guess_range=guess_range,
+        epochs=number_epochs,
         batch_size=10,
         validation_split=0.1,
         data_augmentation=False,
@@ -110,19 +123,19 @@ def main():
     model_wo_sm = innvestigate.model_wo_softmax(model)
     # gradient_analyzer = innvestigate.analyzer.Gradient(model_wo_sm)
     gradient_analyzer = innvestigate.analyzer.DeepTaylor(model_wo_sm)
-    vis_trace = np.zeros(LEN_SAMPLES)
-
-    for i in range(LEN_TRACES):
+    vis_trace = np.zeros(len_traces)
+    for i in range(len_traces):
         trace_sample = traces_protect[i]
-        trace = trace_sample.reshape(1, LEN_SAMPLES)
-        prob = model.predict(trace)
+        trace = trace_sample.reshape(1, len_samples)
+        # prob = model.predict(trace)
         vis_trace = gradient_analyzer.analyze(trace)[0]
-        fig, (ax0, ax1, ax2) = plt.subplots(3)
+        _, (ax0, ax1, ax2) = plt.subplots(3)
         ax0.plot(traces_protect[0:100].T)
         ax0.plot(traces_unprotect[0:100].T)
-        ax1.plot(trace_sample, 'blue')
-        ax2.plot(abs(vis_trace), 'red')
+        ax1.plot(trace_sample, "blue")
+        ax2.plot(abs(vis_trace), "red")
         plt.show()
+
 
 if __name__ == "__main__":
     main()
