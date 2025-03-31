@@ -7,7 +7,9 @@ This was achieved by using several open-source tools for attribution visualizati
 2. [Innvestigate](https://github.com/albermax/innvestigate)
 3. [Xplique](https://github.com/deel-ai/xplique)
 
-The above code shows an example of using [Innvestigate](https://github.com/albermax/innvestigate) as a case study in the case of [ASCAD](https://github.com/ANSSI-FR/ASCAD/tree/master/ATMEGA_AES_v1). 
+The above codes show the following:
+-  An example of using [Innvestigate](https://github.com/albermax/innvestigate) as a case study in the case of [ASCAD](https://github.com/ANSSI-FR/ASCAD/tree/master/ATMEGA_AES_v1). 
+- A second example that shows the efficiency of such methods to be used in fault injection attacks.
 
 
 
