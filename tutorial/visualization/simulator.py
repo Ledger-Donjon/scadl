@@ -1,13 +1,13 @@
+import innvestigate
+import keras
 import matplotlib.pyplot as plt
 import numpy as np
-import keras
+import tensorflow as tf
 from keras.layers import Dense, Input
 from keras.models import Sequential
-import tensorflow as tf
-import innvestigate
-from scadl.tools import normalization
 from scadl.augmentation import Mixup
 from scadl.profile import Profile
+from scadl.tools import normalization
 
 tf.compat.v1.disable_eager_execution()
 

@@ -9,7 +9,6 @@ import numpy as np
 import tensorflow as tf
 from keras.layers import Dense, Input
 from keras.models import Sequential
-
 from scadl.augmentation import Mixup, RandomCrop
 from scadl.profile import Profile
 from scadl.tools import normalization, remove_avg, sbox
